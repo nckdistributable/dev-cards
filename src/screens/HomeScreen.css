@@ -1,0 +1,91 @@
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0 1rem;
+}
+
+.home-logo {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+.logo-dev { color: var(--text-primary); }
+.logo-sep { color: var(--accent); }
+.logo-cards { color: var(--accent); }
+
+.icon-btn {
+  font-size: 1.4rem;
+  padding: 0.4rem;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px;
+}
+
+.home-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 0.5rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+.stat-value.accent { color: var(--accent); }
+.stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+.start-btn {
+  margin: 0.5rem 0 1.5rem;
+  padding: 1rem;
+  font-size: 1.1rem;
+  border-radius: var(--radius);
+}
+
+.section-title {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.home-courses { display: flex; flex-direction: column; gap: 0.75rem; padding-bottom: 2rem; }
+
+.course-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.course-name {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.course-total { font-size: 0.8rem; color: var(--text-muted); }
+
+.topic-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.topic-chip {
+  font-size: 0.72rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 100px;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
