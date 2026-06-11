@@ -1,36 +1,63 @@
 import { useEffect, useState } from 'react'
 import { getAllCards, getCourses, getCardsByCourse, getTopics, getCardsByTopic } from '../lib/cards'
-import { getDueCards, getStreak, getDailyStats } from '../lib/db'
+import { getAllProgress, getStreak, getDailyStats } from '../lib/db'
 import { Card } from '../types'
 import './HomeScreen.css'
 
+const NEW_PER_DAY = 15
+// FSRS state: 0 = New, 1 = Learning, 2 = Review, 3 = Relearning
+const STATE_REVIEW = 2
+
 interface Props {
-  onStartSession: (cards: Card[]) => void
+  onStartSession: (cards: Card[], practice?: boolean) => void
 }
 
 export default function HomeScreen({ onStartSession }: Props) {
-  const [dueCount, setDueCount] = useState(0)
+  const [newCount, setNewCount] = useState(0)
+  const [reviewCount, setReviewCount] = useState(0)
   const [streak, setStreak] = useState(0)
-  const [dueCards, setDueCards] = useState<Card[]>([])
-  const [todayReviewed, setTodayReviewed] = useState(0)
+  const [sessionCards, setSessionCards] = useState<Card[]>([])
+  const [learnedByCourse, setLearnedByCourse] = useState<Map<string, number>>(new Map())
 
   useEffect(() => {
     async function load() {
       const allCards = getAllCards()
-      const allIds = allCards.map((c) => c.id)
-      const due = await getDueCards(allIds)
-      const dueCardObjects = allCards.filter((c) => due.includes(c.id))
-      setDueCards(dueCardObjects)
-      setDueCount(dueCardObjects.length)
-      setStreak(await getStreak())
+      const allProgress = await getAllProgress()
+      const progressMap = new Map(allProgress.map((p) => [p.cardId, p]))
+      const now = new Date().toISOString()
+
+      const newCards = allCards.filter((c) => !progressMap.has(c.id))
+      const dueReview = allCards.filter((c) => {
+        const p = progressMap.get(c.id)
+        return p !== undefined && p.due <= now
+      })
+
       const today = new Date().toISOString().slice(0, 10)
-      const s = await getDailyStats(today)
-      setTodayReviewed(s?.reviewed ?? 0)
+      const todayStats = await getDailyStats(today)
+      const introducedToday = todayStats?.newIntroduced ?? 0
+      const newLimit = Math.max(0, NEW_PER_DAY - introducedToday)
+      const limitedNew = newCards.slice(0, newLimit)
+
+      setSessionCards([...limitedNew, ...dueReview])
+      setNewCount(limitedNew.length)
+      setReviewCount(dueReview.length)
+      setStreak(await getStreak())
+
+      // learned = card reached Review state, not just "was seen once"
+      const learned = new Map<string, number>()
+      for (const card of allCards) {
+        const p = progressMap.get(card.id)
+        if (p && p.state >= STATE_REVIEW) {
+          learned.set(card.course, (learned.get(card.course) ?? 0) + 1)
+        }
+      }
+      setLearnedByCourse(learned)
     }
     load()
   }, [])
 
   const courses = getCourses()
+  const sessionTotal = sessionCards.length
 
   return (
     <div className="screen home-screen">
@@ -44,44 +71,45 @@ export default function HomeScreen({ onStartSession }: Props) {
 
       <div className="home-stats">
         <div className="stat-card">
-          <div className="stat-value accent">{dueCount}</div>
-          <div className="stat-label">к повторению</div>
+          <div className="stat-value">{newCount}</div>
+          <div className="stat-label">новые</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-value accent">{reviewCount}</div>
+          <div className="stat-label">повторить</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">{streak}</div>
           <div className="stat-label">🔥 стрик</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value">{todayReviewed}</div>
-          <div className="stat-label">сегодня</div>
-        </div>
       </div>
 
       <button
         className="btn btn-primary btn-block start-btn"
-        onClick={() => onStartSession(dueCards)}
-        disabled={dueCount === 0}
+        onClick={() => onStartSession(sessionCards)}
+        disabled={sessionTotal === 0}
       >
-        {dueCount === 0 ? 'Нечего повторять ✨' : `Начать сессию →`}
+        {sessionTotal === 0 ? 'На сегодня всё ✨' : `Начать сессию (${sessionTotal}) →`}
       </button>
 
       <section className="home-courses">
-        <h2 className="section-title">Курсы</h2>
+        <h2 className="section-title">Курсы · практика</h2>
         {courses.map((course) => {
           const topics = getTopics(course)
           const total = getCardsByCourse(course).length
+          const learned = learnedByCourse.get(course) ?? 0
           return (
             <div
               key={course}
               className="course-preview card-surface"
-              onClick={() => onStartSession(getCardsByCourse(course))}
+              onClick={() => onStartSession(getCardsByCourse(course), true)}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && onStartSession(getCardsByCourse(course))}
+              onKeyDown={(e) => e.key === 'Enter' && onStartSession(getCardsByCourse(course), true)}
             >
               <div className="course-preview-header">
                 <span className="course-name">{course}</span>
-                <span className="course-total">{total} карт →</span>
+                <span className="course-total">{learned}/{total} →</span>
               </div>
               <div className="topic-chips">
                 {topics.map((t) => (
@@ -90,7 +118,7 @@ export default function HomeScreen({ onStartSession }: Props) {
                     className="topic-chip"
                     onClick={(e) => {
                       e.stopPropagation()
-                      onStartSession(getCardsByTopic(course, t))
+                      onStartSession(getCardsByTopic(course, t), true)
                     }}
                   >
                     {t}
