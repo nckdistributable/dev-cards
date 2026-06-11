@@ -1,0 +1,70 @@
+[
+  {
+    "id": "crypto-hashing-001",
+    "course": "crypto",
+    "topic": "hashing",
+    "level": "beginner",
+    "type": "concept",
+    "concept": "Хеш-функция преобразует входные данные произвольной длины в вывод фиксированного размера. Криптографическая хеш-функция дополнительно устойчива к предвычислению и коллизиям.",
+    "question": "Какие свойства у криптографической хеш-функции?",
+    "explanation": "Криптографическая хеш-функция: 1) Deterministic — одинаковые входы дают одинаковые выходы; 2) Preimage resistance — нельзя восстановить вход из хеша; 3) Collision resistance — сложно найти два входа с одинаковым выходом; 4) Avalanche effect — 1-битное изменение входа меняет ~50% битов выхода."
+  },
+  {
+    "id": "crypto-hashing-002",
+    "course": "crypto",
+    "topic": "hashing",
+    "level": "beginner",
+    "type": "choice",
+    "concept": "SHA-256 выводит 256 бит (32 байта) независимо от входа. Используется в Bitcoin, TLS, x.509. Объем визуально записывается как 64 hex-символа.",
+    "question": "Сколько байт в выводе SHA-256?",
+    "options": ["16", "20", "32", "64"],
+    "answer": 2,
+    "explanation": "SHA-256 производит 256 бит = 32 байта. В hex-представлении 64 символа (по 4 бита на символ). MD5 — 128 бит/16 байт, SHA-1 — 160 бит/20 байт, SHA-512 — 512 бит/64 байт."
+  },
+  {
+    "id": "crypto-hashing-003",
+    "course": "crypto",
+    "topic": "hashing",
+    "level": "beginner",
+    "type": "concept",
+    "concept": "Salt — случайные данные, добавляемые к паролю перед хешированием. Защищает от rainbow tables и обеспечивает, что одинаковые пароли дают разные хеши.",
+    "question": "Зачем добавлять salt при хешировании паролей?",
+    "explanation": "Salt — уникальные случайные данные для каждого пароля. Защищает от: 1) rainbow tables — предвычисленных хешей; 2) одинаковых паролей (два hash(пароль + salt1) ≠ hash(пароль + salt2)). Salt хранится открыто рядом с хешем."
+  },
+  {
+    "id": "crypto-hashing-004",
+    "course": "crypto",
+    "topic": "hashing",
+    "level": "intermediate",
+    "type": "choice",
+    "concept": "bcrypt, scrypt, Argon2 — алгоритмы хеширования паролей. Они намеренно медленные (трудоемкие) для защиты от brute-force.",
+    "question": "Почему нельзя использовать SHA-256 для хранения паролей?",
+    "options": ["Он не поддерживает salt", "Он слишком медленный", "Он слишком быстрый", "Он не безопасен"],
+    "answer": 2,
+    "explanation": "SHA-256 слишком быстрый: GPU может вычислять миллиарды SHA-256/сек. Bcrypt/Argon2 имеют настраиваемый work factor, делаящий brute-force практически невозможным. bcrypt также встраивает salt."
+  },
+  {
+    "id": "crypto-hashing-005",
+    "course": "crypto",
+    "topic": "hashing",
+    "level": "intermediate",
+    "type": "choice",
+    "concept": "HMAC (Hash-based Message Authentication Code) — механизм проверки целостности сообщения с помощью секретного ключа. HMAC = hash(key || message || key).",
+    "question": "Что гарантирует HMAC?",
+    "options": ["Шифрование сообщения", "Целостность и аутентичность", "Анонимность", "Сжатие"],
+    "answer": 1,
+    "explanation": "HMAC гарантирует: 1) целостность — сообщение не изменено; 2) аутентичность — отправитель знает секретный ключ. Не шифрует — данные остаются открытыми. Используется в JWT, TLS, API аутентификации."
+  },
+  {
+    "id": "crypto-hashing-006",
+    "course": "crypto",
+    "topic": "hashing",
+    "level": "advanced",
+    "type": "choice",
+    "concept": "Length extension attack: атака на хеш-функции семейства Merkle-Damgård (MD5, SHA-1, SHA-256). Атакующий может добавлять данные без знания ключа, зная промежуточный хеш.",
+    "question": "Какая хеш-функция устойчива к length extension attack?",
+    "options": ["SHA-256", "SHA-1", "SHA-3 (Keccak)", "MD5"],
+    "answer": 2,
+    "explanation": "SHA-3 (Keccak) использует sponge construction, а не Merkle-Damgård. Последнее уязвимо к length extension: внутреннее состояние хеша = IV + данные. Поэтому в HMAC рекомендуется HMAC-SHA256 или SHA-3."
+  }
+]

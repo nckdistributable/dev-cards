@@ -1,0 +1,68 @@
+[
+  {
+    "id": "blockchain-basics-001",
+    "course": "blockchain",
+    "topic": "basics",
+    "level": "beginner",
+    "type": "concept",
+    "concept": "Blockchain — цепочка блоков, в которой каждый блок содержит хеш предыдущего. Изменение любого блока меняет хеши всех последующих, что делает цепь тампер-резистентной.",
+    "question": "Что делает blockchain tamper-resistant?",
+    "explanation": "Cryptographic linking: каждый блок содержит хеш предыдущего. Изменение данных в блоке меняет его хеш, что делает недействительным хеш всех последующих. Для изменения истории нужно пересчитать всю цепь от изменённого блока до конца."
+  },
+  {
+    "id": "blockchain-basics-002",
+    "course": "blockchain",
+    "topic": "basics",
+    "level": "beginner",
+    "type": "choice",
+    "concept": "Блок в blockchain содержит: индекс, времяметку (timestamp), транзакции, nonce, хеш предыдущего блока, хеш Merkle root.",
+    "question": "Что из перечисленного НЕ входит в заголовок блока?",
+    "options": ["Хеш предыдущего", "Nonce", "Содержимое транзакции", "IP-адрес майнера"],
+    "answer": 3,
+    "explanation": "IP-адрес майнера не входит в блок. Заголовок содержит: хеш предыдущего, Merkle root транзакций, timestamp, nonce, bits (напряжённость). Сами транзакции хранятся в отдельном поле блока."
+  },
+  {
+    "id": "blockchain-basics-003",
+    "course": "blockchain",
+    "topic": "basics",
+    "level": "intermediate",
+    "type": "concept",
+    "concept": "Proof of Work (PoW): майнер подбирает nonce так, чтобы хеш блока начинался с нужным числом нулей. Сложность регулируется полем difficulty.",
+    "question": "Зачем нужен nonce в системе Proof of Work?",
+    "explanation": "Nonce (number used once) — переменная, которую майнер меняет, добиваясь нужного хеша. Так как SHA-256 нельзя предсказать, единственный способ — brute force подбор. Сложность регулируется количеством нулей в начале хеша."
+  },
+  {
+    "id": "blockchain-basics-004",
+    "course": "blockchain",
+    "topic": "basics",
+    "level": "intermediate",
+    "type": "choice",
+    "concept": "Merkle tree — двоичное дерево хешей. Merkle root однозначно определяет все транзакции блока. Позволяет проверить отдельную транзакцию за O(log n).",
+    "question": "Для чего используется Merkle tree в Bitcoin?",
+    "options": ["Хранение ключей", "Сжатие транзакций", "Быстрая проверка включения транзакции в блок", "Генерация nonce"],
+    "answer": 2,
+    "explanation": "Merkle proof позволяет проверить наличие транзакции в блоке без загрузки всех транзакций (SPV-клиенты). Путь от листа до root занимает O(log n) хешей."
+  },
+  {
+    "id": "blockchain-basics-005",
+    "course": "blockchain",
+    "topic": "basics",
+    "level": "intermediate",
+    "type": "concept",
+    "concept": "Consensus обеспечивает согласие узлов сети на единой версии истории. Без consensus нет единого авторитетного источника — каждый узел может предлагать свою версию.",
+    "question": "Что такой consensus в blockchain?",
+    "explanation": "Consensus — механизм согласования узлов на одну версию цепочки без центрального арбитра. PoW (Bitcoin), PoS (Ethereum), PBFT — разные алгоритмы consensus. Каждый имеет trade-off между безопасностью, скоростью и децентрализацией."
+  },
+  {
+    "id": "blockchain-basics-006",
+    "course": "blockchain",
+    "topic": "basics",
+    "level": "advanced",
+    "type": "choice",
+    "concept": "51% attack: если атакующий контролирует >50% hashrate, он может переписать историю (double spend), но не может создавать монеты из ничего.",
+    "question": "Что может сделать атакующий с >51% hashrate?",
+    "options": ["Создать Bitcoin из ничего", "Изменить любую историческую транзакцию", "Удвоить потраченные монеты (double spend)", "Читать приватные ключи"],
+    "answer": 2,
+    "explanation": "C >51% hashrate атакующий может: отменять свои недавние транзакции (double spend), отключать других майнеров. Но не может: создавать BTC из ничего, менять старые блоки, читать чужие ключи."
+  }
+]

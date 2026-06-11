@@ -1,0 +1,59 @@
+.cargo-feedback {
+  border-radius: var(--radius-sm);
+  border: 1px solid;
+  padding: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  margin-top: 1rem;
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cargo-ok {
+  border-color: rgba(78, 201, 78, 0.3);
+  background: rgba(78, 201, 78, 0.05);
+}
+
+.cargo-err {
+  border-color: rgba(247, 76, 76, 0.3);
+  background: rgba(247, 76, 76, 0.05);
+}
+
+.cargo-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.cargo-icon {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.cargo-ok .cargo-icon { color: var(--green); }
+.cargo-err .cargo-icon { color: var(--red); }
+
+.cargo-status { line-height: 1.6; }
+
+.cargo-compiling { color: var(--green); }
+.cargo-finished { color: var(--green); font-weight: 700; }
+.cargo-crate { color: var(--text-secondary); }
+
+.cargo-errcode { color: var(--red); }
+.cargo-errdesc { color: var(--text-secondary); }
+
+.cargo-explanation {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+  margin-top: 0;
+  white-space: pre-wrap;
+}
