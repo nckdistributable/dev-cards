@@ -4,6 +4,7 @@ interface Props {
   correct: boolean
   explanation: string
   errorCode?: string
+  variant?: 'cargo' | 'test'
 }
 
 const ERROR_CODES: Record<string, string> = {
@@ -17,14 +18,26 @@ const ERROR_CODES: Record<string, string> = {
   'E0716': 'temporary value dropped while borrowed',
 }
 
-export default function CargoFeedback({ correct, explanation, errorCode }: Props) {
+export default function CargoFeedback({ correct, explanation, errorCode, variant = 'cargo' }: Props) {
   const code = errorCode ?? (correct ? null : guessErrorCode(explanation))
 
   return (
     <div className={`cargo-feedback ${correct ? 'cargo-ok' : 'cargo-err'}`}>
       <div className="cargo-header">
         <span className="cargo-icon">{correct ? '✓' : '✗'}</span>
-        {correct ? (
+        {variant === 'test' ? (
+          <span className="cargo-status">
+            {correct ? (
+              <>
+                <span className="cargo-finished">test result: ok.</span> 1 passed; 0 failed
+              </>
+            ) : (
+              <span className="cargo-errcode">
+                test result: FAILED. <span className="cargo-errdesc">0 passed; 1 failed</span>
+              </span>
+            )}
+          </span>
+        ) : correct ? (
           <span className="cargo-status">
             <span className="cargo-compiling">Compiling</span>{' '}
             <span className="cargo-crate">playground v0.1.0</span>
