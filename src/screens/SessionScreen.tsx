@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { Card } from '../types'
 import { useSession } from '../hooks/useSession'
 import { getRatingOptions } from '../lib/srs'
-import { getProgress } from '../lib/db'
 import CodeBlock from '../components/CodeBlock'
 import CargoFeedback from '../components/CargoFeedback'
 import { SessionStats } from '../App'
@@ -30,7 +29,6 @@ export default function SessionScreen({ cards, onFinish, onBack }: Props) {
   if (!state.currentCard) return null
 
   const card = state.currentCard
-  const progress = undefined // loaded lazily if needed
   const ratingOptions = getRatingOptions(undefined)
 
   const LEVEL_COLORS: Record<string, string> = {
@@ -42,7 +40,6 @@ export default function SessionScreen({ cards, onFinish, onBack }: Props) {
   return (
     <div className="screen session-screen">
       <header className="session-header">
-        <button className="back-btn" onClick={onBack}>←</button>
         <div className="session-progress">
           <div
             className="session-progress-fill"
@@ -120,6 +117,10 @@ export default function SessionScreen({ cards, onFinish, onBack }: Props) {
           </div>
         )}
       </div>
+
+      <button className="floating-back-btn" onClick={onBack} aria-label="Назад">
+        ←
+      </button>
     </div>
   )
 }
