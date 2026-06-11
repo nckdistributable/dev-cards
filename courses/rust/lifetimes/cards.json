@@ -35,7 +35,7 @@
     "options": ["Да", "Нет"],
     "answer": 1,
     "expected": "fails",
-    "explanation": "Нет. result используется вне блока, где живёт s2. Lifetime 'a = min(s1, s2) = s2. result переживает s2. Ошибка: `error[E0597]: \`s2\` does not live long enough`."
+    "explanation": "Нет. result используется вне блока, где живёт s2. Lifetime 'a = min(s1, s2) = s2. result переживает s2. Ошибка: `error[E0597]: `s2` does not live long enough`."
   },
   {
     "id": "rust-lifetimes-004",
