@@ -37,6 +37,11 @@ export async function saveProgress(progress: CardProgress): Promise<void> {
   await db.put('progress', progress)
 }
 
+export async function deleteProgress(cardId: string): Promise<void> {
+  const db = await getDB()
+  await db.delete('progress', cardId)
+}
+
 export async function getAllProgress(): Promise<CardProgress[]> {
   const db = await getDB()
   return db.getAll('progress')
@@ -45,10 +50,9 @@ export async function getAllProgress(): Promise<CardProgress[]> {
 export async function getDueCards(cardIds: string[]): Promise<string[]> {
   const now = new Date().toISOString()
   const all = await getAllProgress()
-  const dueSet = new Set(
-    all.filter((p) => p.due <= now).map((p) => p.cardId)
-  )
-  const newCards = cardIds.filter((id) => !all.find((p) => p.cardId === id))
+  const progressIds = new Set(all.map((p) => p.cardId))
+  const dueSet = new Set(all.filter((p) => p.due <= now).map((p) => p.cardId))
+  const newCards = cardIds.filter((id) => !progressIds.has(id))
   return [...newCards, ...cardIds.filter((id) => dueSet.has(id))]
 }
 
