@@ -7,15 +7,18 @@ interface Props {
 }
 
 export default function SessionSummaryScreen({ stats, onHome }: Props) {
-  const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0
+  const accuracy = stats.graded > 0 ? Math.round((stats.correct / stats.graded) * 100) : null
   const minutes = Math.floor(stats.durationMs / 60000)
   const seconds = Math.floor((stats.durationMs % 60000) / 1000)
   const timeStr = minutes > 0 ? `${minutes}м ${seconds}с` : `${seconds}с`
+  const failed = stats.graded - stats.correct
 
   return (
     <div className="screen summary-screen">
       <div className="summary-content">
-        <div className="summary-icon">{accuracy >= 80 ? '🎉' : accuracy >= 50 ? '💪' : '👆'}</div>
+        <div className="summary-icon">
+          {accuracy === null ? '📖' : accuracy >= 80 ? '🎉' : accuracy >= 50 ? '💪' : '👆'}
+        </div>
         <h1 className="summary-title">Сессия завершена</h1>
 
         <div className="summary-grid">
@@ -24,7 +27,9 @@ export default function SessionSummaryScreen({ stats, onHome }: Props) {
             <div className="summary-stat-label">карточек</div>
           </div>
           <div className="summary-stat card-surface">
-            <div className="summary-stat-value accent">{accuracy}%</div>
+            <div className="summary-stat-value accent">
+              {accuracy === null ? '—' : `${accuracy}%`}
+            </div>
             <div className="summary-stat-label">точность</div>
           </div>
           <div className="summary-stat card-surface">
@@ -35,7 +40,7 @@ export default function SessionSummaryScreen({ stats, onHome }: Props) {
 
         <div className="cargo-summary">
           <pre className="cargo-output">
-{`$ cargo test\n   Compiling dev-cards v0.1.0\n    Finished dev [unoptimized] target\n     Running tests\n\ntest result: ok. ${stats.correct} passed; ${stats.total - stats.correct} failed; 0 ignored`}
+{`$ cargo test\n   Compiling dev-cards v0.1.0\n    Finished dev [unoptimized] target\n     Running tests\n\ntest result: ${failed === 0 ? 'ok' : 'FAILED'}. ${stats.correct} passed; ${failed} failed; ${stats.total - stats.graded} ignored`}
           </pre>
         </div>
 
