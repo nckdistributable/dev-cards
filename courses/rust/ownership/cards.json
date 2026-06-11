@@ -21,7 +21,7 @@
     "options": ["Да", "Нет"],
     "answer": 1,
     "expected": "fails",
-    "explanation": "Нет. После `let s2 = s1` владение String переходит к s2. Попытка использовать s1 после move вызывает: `error[E0382]: borrow of moved value: \`s1\``. Чтобы исправить, нужен s1.clone()."
+    "explanation": "Нет. После `let s2 = s1` владение String переходит к s2. Попытка использовать s1 после move вызывает: `error[E0382]: borrow of moved value: `s1``. Чтобы исправить, нужен s1.clone()."
   },
   {
     "id": "rust-ownership-003",
@@ -49,7 +49,7 @@
     "options": ["Да", "Нет"],
     "answer": 1,
     "expected": "fails",
-    "explanation": "Нет. Вызов `take(s)` перемещает s в функцию. После возврата s больше недействителен. Ошибка: `error[E0382]: use of moved value: \`s\``. Решение: вернуть String из функции или использовать &String."
+    "explanation": "Нет. Вызов `take(s)` перемещает s в функцию. После возврата s больше недействителен. Ошибка: `error[E0382]: use of moved value: `s``. Решение: вернуть String из функции или использовать &String."
   },
   {
     "id": "rust-ownership-005",
@@ -77,7 +77,7 @@
     "options": ["Да", "Нет"],
     "answer": 1,
     "expected": "fails",
-    "explanation": "Нет. `drop(s)` принимает s по значению (move) и немедленно уничтожает его. После drop(s) переменная s недействительна. Ошибка: `error[E0382]: use of moved value: \`s\``."
+    "explanation": "Нет. `drop(s)` принимает s по значению (move) и немедленно уничтожает его. После drop(s) переменная s недействительна. Ошибка: `error[E0382]: use of moved value: `s``."
   },
   {
     "id": "rust-ownership-007",
