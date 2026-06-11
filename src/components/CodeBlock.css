@@ -1,6 +1,10 @@
 .code-wrapper {
   position: relative;
   margin: 0.75rem 0;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-sm);
 }
 
 .code-lang {
@@ -12,19 +16,24 @@
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .code-block {
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   line-height: 1.65;
   background: #0d0b09;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 1rem 1rem 1rem 1rem;
-  overflow-x: auto;
+  padding: 1rem;
   white-space: pre;
   tab-size: 4;
+  min-width: min-content;
+  /* disable ligatures so -> stays -> and not → */
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
 }
 
 .c-kw { color: #f97316; font-weight: 500; }
