@@ -34,6 +34,7 @@
 .card-area {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -78,7 +79,7 @@
 
 .option-btn {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.75rem;
   padding: 0.85rem 1rem;
   background: var(--bg-card);
@@ -88,6 +89,8 @@
   font-size: 0.95rem;
   text-align: left;
   transition: all 0.12s;
+  white-space: pre-line;
+  line-height: 1.5;
 }
 .option-btn:hover {
   background: var(--bg-elevated);
@@ -108,6 +111,7 @@
   font-weight: 700;
   flex-shrink: 0;
   color: var(--accent);
+  margin-top: 1px;
 }
 
 .answer-badge {
