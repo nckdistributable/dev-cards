@@ -3,6 +3,15 @@ import { Card } from '../types'
 import { saveProgress, getProgress, saveDailyStats, getDailyStats, getStreak } from '../lib/db'
 import { applyRating, Rating, newCardProgress } from '../lib/srs'
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
 export interface SessionState {
   currentCard: Card | null
   currentIndex: number
@@ -17,10 +26,11 @@ export interface SessionState {
 
 export function useSession(cards: Card[]) {
   const startTime = useRef(Date.now())
+  const [deck] = useState(() => shuffle(cards))
   const [state, setState] = useState<SessionState>({
-    currentCard: cards[0] ?? null,
+    currentCard: deck[0] ?? null,
     currentIndex: 0,
-    total: cards.length,
+    total: deck.length,
     showAnswer: false,
     answered: false,
     selectedOption: null,
@@ -31,7 +41,7 @@ export function useSession(cards: Card[]) {
 
   const selectOption = useCallback(
     (idx: number) => {
-      const card = cards[state.currentIndex]
+      const card = deck[state.currentIndex]
       if (!card || state.answered) return
       const isCorrect = card.type === 'concept' ? true : card.answer === idx
       setState((s) => ({
@@ -43,7 +53,7 @@ export function useSession(cards: Card[]) {
         correct: isCorrect ? s.correct + 1 : s.correct,
       }))
     },
-    [cards, state.currentIndex, state.answered]
+    [deck, state.currentIndex, state.answered]
   )
 
   const revealConcept = useCallback(() => {
@@ -52,14 +62,13 @@ export function useSession(cards: Card[]) {
 
   const applyRatingAndAdvance = useCallback(
     async (rating: Rating) => {
-      const card = cards[state.currentIndex]
+      const card = deck[state.currentIndex]
       if (!card) return
 
       const existing = await getProgress(card.id)
       const next = applyRating(card.id, existing, rating)
       await saveProgress(next)
 
-      // update daily stats
       const today = new Date().toISOString().slice(0, 10)
       const todayStats = await getDailyStats(today)
       const updated = {
@@ -71,13 +80,13 @@ export function useSession(cards: Card[]) {
       await saveDailyStats(updated)
 
       const nextIndex = state.currentIndex + 1
-      if (nextIndex >= cards.length) {
+      if (nextIndex >= deck.length) {
         setState((s) => ({ ...s, done: true }))
       } else {
         setState((s) => ({
           ...s,
           currentIndex: nextIndex,
-          currentCard: cards[nextIndex],
+          currentCard: deck[nextIndex],
           showAnswer: false,
           answered: false,
           selectedOption: null,
@@ -85,7 +94,7 @@ export function useSession(cards: Card[]) {
         }))
       }
     },
-    [cards, state.currentIndex, state.isCorrect]
+    [deck, state.currentIndex, state.isCorrect]
   )
 
   const getDuration = useCallback(() => Date.now() - startTime.current, [])
