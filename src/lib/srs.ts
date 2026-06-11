@@ -5,6 +5,7 @@ import {
   Rating,
   Card as FSRSCard,
   State,
+  RecordLog,
 } from 'ts-fsrs'
 import { CardProgress } from '../types'
 
@@ -52,6 +53,11 @@ export interface RatingOption {
   interval: string
 }
 
+function getScheduled(log: RecordLog, rating: Rating): FSRSCard {
+  const item = (log as unknown as Record<number, { card: FSRSCard }>)[rating]
+  return item.card
+}
+
 export function getRatingOptions(
   progress: CardProgress | undefined
 ): RatingOption[] {
@@ -67,7 +73,7 @@ export function getRatingOptions(
   ]
 
   return ratingMap.map(({ rating, label }) => {
-    const next = schedulingCards[rating].card
+    const next = getScheduled(schedulingCards, rating)
     const daysUntil = Math.round(next.scheduled_days)
     let interval = ''
     if (daysUntil === 0) interval = '< 1 дня'
@@ -86,6 +92,6 @@ export function applyRating(
   const card = progress ? progressToFSRS(progress) : createEmptyCard()
   const now = new Date()
   const schedulingCards = f.repeat(card, now)
-  const next = schedulingCards[rating].card
+  const next = getScheduled(schedulingCards, rating)
   return fsrsToProgress(cardId, next)
 }
