@@ -55,9 +55,23 @@
 .topic-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 0.82rem;
-  padding: 0.25rem 0;
+  padding: 0.35rem 0;
   border-top: 1px solid var(--border);
 }
 .topic-name { color: var(--text-secondary); }
+.topic-row-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 .topic-stats { color: var(--text-muted); font-family: var(--font-mono); }
+.topic-start-btn {
+  color: var(--text-muted);
+  font-size: 1rem;
+  padding: 0 0.25rem;
+  transition: color 0.15s;
+  line-height: 1;
+}
+.topic-start-btn:hover { color: var(--accent); }
