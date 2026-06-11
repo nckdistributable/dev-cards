@@ -82,7 +82,13 @@ export default function HomeScreen({ onStartSession, onOpenLibrary }: Props) {
               </div>
               <div className="topic-chips">
                 {topics.map((t) => (
-                  <span key={t} className="topic-chip">{t}</span>
+                  <button
+                    key={t}
+                    className="topic-chip"
+                    onClick={() => onStartSession(getCardsByTopic(course, t))}
+                  >
+                    {t}
+                  </button>
                 ))}
               </div>
             </div>
