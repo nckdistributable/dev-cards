@@ -1,0 +1,31 @@
+name: Validate Cards
+
+on:
+  pull_request:
+    paths:
+      - 'courses/**'
+      - 'schema/**'
+      - 'scripts/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate card schema and IDs
+        run: npm run validate
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Check Rust snippets
+        run: npm run check-rust
