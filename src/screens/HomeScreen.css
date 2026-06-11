@@ -81,11 +81,23 @@
 .course-total { font-size: 0.8rem; color: var(--text-muted); }
 
 .topic-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
 .topic-chip {
   font-size: 0.72rem;
-  padding: 0.25rem 0.6rem;
+  padding: 0.3rem 0.65rem;
   border-radius: 100px;
   background: var(--bg-elevated);
   color: var(--text-secondary);
   font-family: var(--font-mono);
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+.topic-chip:hover {
+  background: var(--bg-card);
+  border-color: var(--border-accent);
+  color: var(--accent);
+}
+.topic-chip:active {
+  transform: scale(0.95);
+  background: var(--accent-glow);
 }
