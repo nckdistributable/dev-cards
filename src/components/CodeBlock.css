@@ -1,0 +1,35 @@
+.code-wrapper {
+  position: relative;
+  margin: 0.75rem 0;
+}
+
+.code-lang {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.code-block {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.65;
+  background: #0d0b09;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1rem 1rem 1rem;
+  overflow-x: auto;
+  white-space: pre;
+  tab-size: 4;
+}
+
+.c-kw { color: #f97316; font-weight: 500; }
+.c-string { color: #86efac; }
+.c-comment { color: #57534e; font-style: italic; }
+.c-macro { color: #fb923c; }
+.c-num { color: #93c5fd; }
+.c-lifetime { color: #a78bfa; }
