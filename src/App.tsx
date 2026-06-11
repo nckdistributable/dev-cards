@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import HomeScreen from './screens/HomeScreen'
-import LibraryScreen from './screens/LibraryScreen'
 import SessionScreen from './screens/SessionScreen'
 import SessionSummaryScreen from './screens/SessionSummaryScreen'
 import { Card } from './types'
@@ -8,8 +7,7 @@ import './styles/App.css'
 
 export type Screen =
   | { name: 'home' }
-  | { name: 'course'; courseId: string }
-  | { name: 'session'; cards: Card[]; courseId?: string }
+  | { name: 'session'; cards: Card[] }
   | { name: 'summary'; stats: SessionStats }
 
 export interface SessionStats {
@@ -26,16 +24,6 @@ export default function App() {
       {screen.name === 'home' && (
         <HomeScreen
           onStartSession={(cards) => setScreen({ name: 'session', cards })}
-          onOpenCourse={(courseId) => setScreen({ name: 'course', courseId })}
-        />
-      )}
-      {screen.name === 'course' && (
-        <LibraryScreen
-          courseId={screen.courseId}
-          onBack={() => setScreen({ name: 'home' })}
-          onStartCourse={(cards, courseId) =>
-            setScreen({ name: 'session', cards, courseId })
-          }
         />
       )}
       {screen.name === 'session' && (
