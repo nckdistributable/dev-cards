@@ -6,10 +6,10 @@ import './HomeScreen.css'
 
 interface Props {
   onStartSession: (cards: Card[]) => void
-  onOpenLibrary: () => void
+  onOpenCourse: (courseId: string) => void
 }
 
-export default function HomeScreen({ onStartSession, onOpenLibrary }: Props) {
+export default function HomeScreen({ onStartSession, onOpenCourse }: Props) {
   const [dueCount, setDueCount] = useState(0)
   const [streak, setStreak] = useState(0)
   const [dueCards, setDueCards] = useState<Card[]>([])
@@ -41,9 +41,6 @@ export default function HomeScreen({ onStartSession, onOpenLibrary }: Props) {
           <span className="logo-sep">::</span>
           <span className="logo-cards">cards</span>
         </div>
-        <button className="icon-btn" onClick={onOpenLibrary} title="Библиотека">
-          📚
-        </button>
       </header>
 
       <div className="home-stats">
@@ -75,17 +72,27 @@ export default function HomeScreen({ onStartSession, onOpenLibrary }: Props) {
           const topics = getTopics(course)
           const total = getCardsByCourse(course).length
           return (
-            <div key={course} className="course-preview card-surface">
+            <div
+              key={course}
+              className="course-preview card-surface"
+              onClick={() => onOpenCourse(course)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && onOpenCourse(course)}
+            >
               <div className="course-preview-header">
                 <span className="course-name">{course}</span>
-                <span className="course-total">{total} карт</span>
+                <span className="course-total">{total} карт →</span>
               </div>
               <div className="topic-chips">
                 {topics.map((t) => (
                   <button
                     key={t}
                     className="topic-chip"
-                    onClick={() => onStartSession(getCardsByTopic(course, t))}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onStartSession(getCardsByTopic(course, t))
+                    }}
                   >
                     {t}
                   </button>
