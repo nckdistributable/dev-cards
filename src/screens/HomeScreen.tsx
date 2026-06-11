@@ -6,10 +6,9 @@ import './HomeScreen.css'
 
 interface Props {
   onStartSession: (cards: Card[]) => void
-  onOpenCourse: (courseId: string) => void
 }
 
-export default function HomeScreen({ onStartSession, onOpenCourse }: Props) {
+export default function HomeScreen({ onStartSession }: Props) {
   const [dueCount, setDueCount] = useState(0)
   const [streak, setStreak] = useState(0)
   const [dueCards, setDueCards] = useState<Card[]>([])
@@ -75,10 +74,10 @@ export default function HomeScreen({ onStartSession, onOpenCourse }: Props) {
             <div
               key={course}
               className="course-preview card-surface"
-              onClick={() => onOpenCourse(course)}
+              onClick={() => onStartSession(getCardsByCourse(course))}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && onOpenCourse(course)}
+              onKeyDown={(e) => e.key === 'Enter' && onStartSession(getCardsByCourse(course))}
             >
               <div className="course-preview-header">
                 <span className="course-name">{course}</span>
