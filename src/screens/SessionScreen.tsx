@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Card } from '../types'
 import { useSession } from '../hooks/useSession'
-import { getRatingOptions } from '../lib/srs'
+import { getRatingOptions, Rating, RatingOption } from '../lib/srs'
+import { getProgress } from '../lib/db'
 import CodeBlock from '../components/CodeBlock'
 import CargoFeedback from '../components/CargoFeedback'
 import { SessionStats } from '../App'
@@ -9,27 +10,58 @@ import './SessionScreen.css'
 
 interface Props {
   cards: Card[]
+  practice: boolean
   onFinish: (stats: SessionStats) => void
   onBack: () => void
 }
 
-export default function SessionScreen({ cards, onFinish, onBack }: Props) {
-  const { state, selectOption, revealConcept, applyRatingAndAdvance, getDuration } = useSession(cards)
+export default function SessionScreen({ cards, practice, onFinish, onBack }: Props) {
+  const {
+    state,
+    currentItem,
+    selectOption,
+    revealConcept,
+    applyRatingAndAdvance,
+    undo,
+    canUndo,
+    getDuration,
+  } = useSession(cards, practice)
+
+  const [ratingOptions, setRatingOptions] = useState<RatingOption[]>([])
 
   useEffect(() => {
     if (state.done) {
       onFinish({
-        total: state.total,
+        total: state.rated,
         correct: state.correct,
+        graded: state.graded,
         durationMs: getDuration(),
       })
     }
   }, [state.done])
 
-  if (!state.currentCard) return null
+  // Compute intervals from the card's actual progress, not a blank card
+  useEffect(() => {
+    if (!practice && state.showAnswer && currentItem) {
+      let cancelled = false
+      getProgress(currentItem.card.id).then((p) => {
+        if (!cancelled) setRatingOptions(getRatingOptions(p))
+      })
+      return () => {
+        cancelled = true
+      }
+    }
+  }, [state.showAnswer, state.currentIndex])
 
-  const card = state.currentCard
-  const ratingOptions = getRatingOptions(undefined)
+  if (!currentItem) return null
+
+  const card = currentItem.card
+
+  // Wrong answer → only Again/Hard, so a miss can't be scheduled far away
+  const visibleRatings =
+    state.isCorrect === false
+      ? ratingOptions.filter((o) => o.rating === Rating.Again || o.rating === Rating.Hard)
+      : ratingOptions
 
   const LEVEL_COLORS: Record<string, string> = {
     beginner: 'var(--green)',
@@ -47,11 +79,19 @@ export default function SessionScreen({ cards, onFinish, onBack }: Props) {
           />
         </div>
         <span className="session-counter">{state.currentIndex + 1}/{state.total}</span>
+        {canUndo && !state.answered && (
+          <button className="undo-btn" onClick={undo} title="Отменить последний ответ">
+            ↩
+          </button>
+        )}
       </header>
 
       <div className="card-area">
         <div className="card-meta">
-          <span className="card-course">{card.course}/{card.topic}</span>
+          <span className="card-course">
+            {card.course}/{card.topic}
+            {practice && <span className="practice-badge"> · практика</span>}
+          </span>
           <span
             className="card-level"
             style={{ color: LEVEL_COLORS[card.level] }}
@@ -75,7 +115,7 @@ export default function SessionScreen({ cards, onFinish, onBack }: Props) {
                 Понятно
               </button>
             ) : (
-              (card.options ?? []).map((opt, i) => (
+              (currentItem.options ?? []).map((opt, i) => (
                 <button
                   key={i}
                   className="option-btn"
@@ -98,22 +138,40 @@ export default function SessionScreen({ cards, onFinish, onBack }: Props) {
             )}
 
             <CargoFeedback
-              correct={state.isCorrect ?? true}
+              correct={state.isCorrect !== false}
               explanation={card.explanation}
+              variant={card.code ? 'cargo' : 'test'}
             />
 
-            <div className="rating-buttons">
-              {ratingOptions.map(({ rating, label, interval }) => (
+            {practice ? (
+              <>
+                {state.isCorrect === false && (
+                  <p className="requeue-hint">Карточка вернётся в конце сессии</p>
+                )}
                 <button
-                  key={rating}
-                  className={`rating-btn rating-${label.toLowerCase()}`}
-                  onClick={() => applyRatingAndAdvance(rating)}
+                  className="btn btn-primary btn-block"
+                  onClick={() => applyRatingAndAdvance()}
                 >
-                  <span className="rating-label">{label}</span>
-                  <span className="rating-interval">{interval}</span>
+                  Дальше →
                 </button>
-              ))}
-            </div>
+              </>
+            ) : (
+              <div
+                className="rating-buttons"
+                style={{ gridTemplateColumns: `repeat(${visibleRatings.length || 4}, 1fr)` }}
+              >
+                {visibleRatings.map(({ rating, label, interval }) => (
+                  <button
+                    key={rating}
+                    className={`rating-btn rating-${label.toLowerCase()}`}
+                    onClick={() => applyRatingAndAdvance(rating)}
+                  >
+                    <span className="rating-label">{label}</span>
+                    <span className="rating-interval">{interval}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
