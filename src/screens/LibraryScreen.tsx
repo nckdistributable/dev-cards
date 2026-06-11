@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { getCourses, getCardsByCourse, getTopics, getCardsByTopic } from '../lib/cards'
-import { getDueCards, getAllProgress } from '../lib/db'
+import { getAllProgress } from '../lib/db'
 import { Card } from '../types'
 import './LibraryScreen.css'
 
 interface Props {
+  courseId?: string
   onBack: () => void
   onStartCourse: (cards: Card[], courseId: string) => void
 }
@@ -17,7 +18,7 @@ interface CourseData {
   topics: { id: string; total: number; learned: number; due: number }[]
 }
 
-export default function LibraryScreen({ onBack, onStartCourse }: Props) {
+export default function LibraryScreen({ courseId, onBack, onStartCourse }: Props) {
   const [courses, setCourses] = useState<CourseData[]>([])
 
   useEffect(() => {
@@ -26,11 +27,11 @@ export default function LibraryScreen({ onBack, onStartCourse }: Props) {
       const progressMap = new Map(allProgress.map((p) => [p.cardId, p]))
       const now = new Date().toISOString()
 
-      const courseIds = getCourses()
-      const data: CourseData[] = courseIds.map((courseId) => {
-        const cards = getCardsByCourse(courseId)
-        const topics = getTopics(courseId).map((topicId) => {
-          const tc = getCardsByTopic(courseId, topicId)
+      const courseIds = courseId ? [courseId] : getCourses()
+      const data: CourseData[] = courseIds.map((id) => {
+        const cards = getCardsByCourse(id)
+        const topics = getTopics(id).map((topicId) => {
+          const tc = getCardsByTopic(id, topicId)
           const learned = tc.filter((c) => progressMap.has(c.id)).length
           const due = tc.filter((c) => {
             const p = progressMap.get(c.id)
@@ -43,23 +44,26 @@ export default function LibraryScreen({ onBack, onStartCourse }: Props) {
           const p = progressMap.get(c.id)
           return !p || p.due <= now
         }).length
-        return { id: courseId, totalCards: cards.length, learnedCards: learned, dueCards: due, topics }
+        return { id, totalCards: cards.length, learnedCards: learned, dueCards: due, topics }
       })
       setCourses(data)
     }
     load()
-  }, [])
+  }, [courseId])
 
-  function startCourse(courseId: string) {
-    const allCards = getCardsByCourse(courseId)
-    onStartCourse(allCards, courseId)
+  function startCourse(id: string) {
+    onStartCourse(getCardsByCourse(id), id)
+  }
+
+  function startTopic(id: string, topicId: string) {
+    onStartCourse(getCardsByTopic(id, topicId), id)
   }
 
   return (
     <div className="screen">
       <header className="screen-header">
         <button className="back-btn" onClick={onBack}>←</button>
-        <span className="screen-title">Библиотека</span>
+        <span className="screen-title">{courseId ?? 'Библиотека'}</span>
       </header>
 
       <div className="library-list">
@@ -88,7 +92,15 @@ export default function LibraryScreen({ onBack, onStartCourse }: Props) {
               {course.topics.map((t) => (
                 <div key={t.id} className="topic-row">
                   <span className="topic-name">{t.id}</span>
-                  <span className="topic-stats">{t.learned}/{t.total}</span>
+                  <div className="topic-row-right">
+                    <span className="topic-stats">{t.learned}/{t.total}</span>
+                    <button
+                      className="topic-start-btn"
+                      onClick={() => startTopic(course.id, t.id)}
+                    >
+                      →
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
