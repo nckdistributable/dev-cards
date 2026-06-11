@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import HomeScreen from './screens/HomeScreen'
 import LibraryScreen from './screens/LibraryScreen'
 import SessionScreen from './screens/SessionScreen'
@@ -8,7 +8,7 @@ import './styles/App.css'
 
 export type Screen =
   | { name: 'home' }
-  | { name: 'library' }
+  | { name: 'course'; courseId: string }
   | { name: 'session'; cards: Card[]; courseId?: string }
   | { name: 'summary'; stats: SessionStats }
 
@@ -26,11 +26,12 @@ export default function App() {
       {screen.name === 'home' && (
         <HomeScreen
           onStartSession={(cards) => setScreen({ name: 'session', cards })}
-          onOpenLibrary={() => setScreen({ name: 'library' })}
+          onOpenCourse={(courseId) => setScreen({ name: 'course', courseId })}
         />
       )}
-      {screen.name === 'library' && (
+      {screen.name === 'course' && (
         <LibraryScreen
+          courseId={screen.courseId}
           onBack={() => setScreen({ name: 'home' })}
           onStartCourse={(cards, courseId) =>
             setScreen({ name: 'session', cards, courseId })
