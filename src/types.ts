@@ -34,7 +34,7 @@ export interface DailyStats {
   date: string
   reviewed: number
   correct: number
-  streak: number
+  newIntroduced?: number
 }
 
 export interface CourseInfo {
