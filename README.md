@@ -1,69 +1,55 @@
 # dev::cards
 
-PWA-приложение для изучения программирования через микро-уроки с spaced repetition (ts-fsrs). Mobile-first, оффлайн-режим, работает как PWA с установкой на домашний экран.
+Spaced repetition для разработчиков. Карточки с кодом, вопросы в стиле компилятора, прогресс в браузере без бэкенда.
 
-## Стек
+**[→ Открыть приложение](https://nckdistributable.github.io/dev-cards/)**
 
-- **Vite + React + TypeScript** — фронтенд
-- **ts-fsrs** — FSRS-алгоритм spaced repetition
-- **idb (IndexedDB)** — прогресс пользователя хранится локально
-- **vite-plugin-pwa** — service worker, offline, установка на iOS/Android
-- **GitHub Actions** — CI (валидация) + deploy (GitHub Pages)
+---
 
-## Быстрый старт
+## Как пользоваться
+
+Открой ссылку выше на телефоне → через меню браузера добавь на домашний экран. Работает офлайн.
+
+Сессия перемешивает карточки из всех курсов по алгоритму [FSRS](https://github.com/open-spaced-repetition/fsrs4anki/wiki/The-Algorithm). После ответа выбираешь одну из четырёх оценок — **Снова / Трудно / Хорошо / Легко** — и карточка уходит на повторение через соответствующий интервал.
+
+---
+
+## Добавить карточки
+
+Через Claude Code:
+
+```
+/add-cards 10 карточек по теме rust/traits уровня intermediate
+```
+
+Вручную — добавь объекты в `courses/<course>/<topic>/cards.json`, открой PR. CI проверит схему, уникальность id и Rust-сниппеты через `cargo check`.
+
+Правила и примеры — в [`CLAUDE.md`](./CLAUDE.md).
+
+---
+
+## Разработка
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Деплой на GitHub Pages
-
-1. В настройках репо: **Settings → Pages → Source: GitHub Actions**
-2. Проверь, что `vite.config.ts` имеет `base: '/dev-cards/'` (=название репо)
-3. Merge в `main` — GitHub Actions соберёт и задеплоит автоматически
-4. Приложение будет доступно по адресу `https://<user>.github.io/dev-cards/`
-
-## Добавление карточек
-
-### Через Claude Code (рекомендуется)
-
-```
-/add-cards 10 карточек по теме rust/traits уровня intermediate
+```bash
+npm run validate    # проверка схемы и дедупликация
+npm run check-rust  # cargo check всех Rust-сниппетов
 ```
 
-Claude читает `CLAUDE.md`, генерирует карточки по схеме и добавляет в `courses/<course>/<topic>/cards.json`.
+---
 
-### Вручную
+## Стек
 
-1. Добавь карточки в `courses/<course>/<topic>/cards.json`
-2. Строго следуй схеме из `schema/card.schema.json` и `CLAUDE.md`
-3. Проверь локально: `npm run validate`
-4. Для Rust-сниппетов: `npm run check-rust` (CI проверяет автоматически)
-5. Открой PR — CI валидирует всё автоматически
+| | |
+|---|---|
+| UI | React 18 + Vite + TypeScript |
+| SRS | [ts-fsrs](https://github.com/open-spaced-repetition/ts-fsrs) |
+| Хранилище | IndexedDB через [idb](https://github.com/jakearchibald/idb) |
+| PWA | vite-plugin-pwa + Workbox |
+| Деплой | GitHub Actions → GitHub Pages |
 
-## Структура
-
-```
-dev-cards/
-├── CLAUDE.md                  # схема, правила, примеры
-├── schema/card.schema.json    # JSON Schema
-├── courses/                   # карточки = контент = код
-│   ├── rust/ownership/
-│   ├── rust/borrowing/
-│   ├── rust/lifetimes/
-│   ├── algorithms/big-o/
-│   ├── blockchain/basics/
-│   └── crypto/hashing/
-├── src/                       # React фронтенд
-├── scripts/
-│   ├── validate.ts            # валидация схемы + дедупликация
-│   └── check-rust.ts          # проверка Rust-сниппетов
-└── .github/workflows/
-    ├── validate.yml           # CI на PR
-    └── deploy.yml             # деплой на Pages
-```
-
-## Прогресс пользователя
-
-Хранится локально в IndexedDB браузера. Обновление карточек не сбрасывает прогресс — он привязан к стабильному `card.id`.
+Прогресс привязан к `card.id` — обновление контента карточек его не сбрасывает.
