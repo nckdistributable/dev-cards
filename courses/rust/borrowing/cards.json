@@ -35,7 +35,7 @@
     "options": ["Да", "Нет"],
     "answer": 1,
     "expected": "fails",
-    "explanation": "Нет. Два одновременных &mut на одни данные запрещены. Ошибка: `error[E0499]: cannot borrow \`s\` as mutable more than once at a time`. Это правило на этапе компиляции предотвращает data races."
+    "explanation": "Нет. Два одновременных &mut на одни данные запрещены. Ошибка: `error[E0499]: cannot borrow `s` as mutable more than once at a time`. Это правило на этапе компиляции предотвращает data races."
   },
   {
     "id": "rust-borrowing-004",
@@ -49,7 +49,7 @@
     "options": ["Да", "Нет"],
     "answer": 1,
     "expected": "fails",
-    "explanation": "Нет. Одновременно существуют &s (неизменяемая) и &mut s (изменяемая). Ошибка: `error[E0502]: cannot borrow \`s\` as mutable because it is also borrowed as immutable`. Использование обеих в println! продлевает их жизнь до этой точки."
+    "explanation": "Нет. Одновременно существуют &s (неизменяемая) и &mut s (изменяемая). Ошибка: `error[E0502]: cannot borrow `s` as mutable because it is also borrowed as immutable`. Использование обеих в println! продлевает их жизнь до этой точки."
   },
   {
     "id": "rust-borrowing-005",
