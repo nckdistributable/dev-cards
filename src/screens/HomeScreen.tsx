@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getAllCards, getCourses, getCardsByCourse, getTopics, getCardsByTopic } from '../lib/cards'
 import { getAllProgress, getStreak, getDailyStats } from '../lib/db'
+import { isSyncConfigured, syncNow } from '../lib/sync'
 import { Card } from '../types'
 import './HomeScreen.css'
 
@@ -10,9 +11,10 @@ const STATE_REVIEW = 2
 
 interface Props {
   onStartSession: (cards: Card[], practice?: boolean) => void
+  onOpenSync: () => void
 }
 
-export default function HomeScreen({ onStartSession }: Props) {
+export default function HomeScreen({ onStartSession, onOpenSync }: Props) {
   const [newCount, setNewCount] = useState(0)
   const [reviewCount, setReviewCount] = useState(0)
   const [streak, setStreak] = useState(0)
@@ -21,6 +23,14 @@ export default function HomeScreen({ onStartSession }: Props) {
 
   useEffect(() => {
     async function load() {
+      // pull progress from other devices before computing counters
+      if (isSyncConfigured()) {
+        try {
+          await syncNow()
+        } catch {
+          // offline or token problem — fall back to local data
+        }
+      }
       const allCards = getAllCards()
       const allProgress = await getAllProgress()
       const progressMap = new Map(allProgress.map((p) => [p.cardId, p]))
@@ -67,6 +77,9 @@ export default function HomeScreen({ onStartSession }: Props) {
           <span className="logo-sep">::</span>
           <span className="logo-cards">cards</span>
         </div>
+        <button className="sync-btn" onClick={onOpenSync} aria-label="Синхронизация">
+          ⚙
+        </button>
       </header>
 
       <div className="home-stats">
