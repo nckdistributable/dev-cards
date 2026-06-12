@@ -93,7 +93,7 @@ export default function HomeScreen({ onStartSession }: Props) {
       </button>
 
       <section className="home-courses">
-        <h2 className="section-title">Курсы · практика</h2>
+        <h2 className="section-title">Курсы</h2>
         {courses.map((course) => {
           const topics = getTopics(course)
           const total = getCardsByCourse(course).length
@@ -102,10 +102,10 @@ export default function HomeScreen({ onStartSession }: Props) {
             <div
               key={course}
               className="course-preview card-surface"
-              onClick={() => onStartSession(getCardsByCourse(course), true)}
+              onClick={() => onStartSession(getCardsByCourse(course))}
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && onStartSession(getCardsByCourse(course), true)}
+              onKeyDown={(e) => e.key === 'Enter' && onStartSession(getCardsByCourse(course))}
             >
               <div className="course-preview-header">
                 <span className="course-name">{course}</span>
@@ -118,7 +118,7 @@ export default function HomeScreen({ onStartSession }: Props) {
                     className="topic-chip"
                     onClick={(e) => {
                       e.stopPropagation()
-                      onStartSession(getCardsByTopic(course, t), true)
+                      onStartSession(getCardsByTopic(course, t))
                     }}
                   >
                     {t}
