@@ -1,10 +1,11 @@
 .code-wrapper {
   position: relative;
   margin: 0.75rem 0;
+  /* explicit max-width so iOS Safari can't let the block push past the viewport */
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  /* prevent horizontal scroll from triggering iOS swipe-back */
   overscroll-behavior-x: contain;
   border-radius: var(--radius-sm);
 }
