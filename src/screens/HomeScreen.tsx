@@ -20,6 +20,7 @@ export default function HomeScreen({ onStartSession, onOpenSync }: Props) {
   const [streak, setStreak] = useState(0)
   const [sessionCards, setSessionCards] = useState<Card[]>([])
   const [learnedByCourse, setLearnedByCourse] = useState<Map<string, number>>(new Map())
+  const [learnedByTopic, setLearnedByTopic] = useState<Map<string, number>>(new Map())
 
   useEffect(() => {
     async function load() {
@@ -55,13 +56,17 @@ export default function HomeScreen({ onStartSession, onOpenSync }: Props) {
 
       // learned = card reached Review state, not just "was seen once"
       const learned = new Map<string, number>()
+      const learnedTopic = new Map<string, number>()
       for (const card of allCards) {
         const p = progressMap.get(card.id)
         if (p && p.state >= STATE_REVIEW) {
           learned.set(card.course, (learned.get(card.course) ?? 0) + 1)
+          const key = `${card.course}/${card.topic}`
+          learnedTopic.set(key, (learnedTopic.get(key) ?? 0) + 1)
         }
       }
       setLearnedByCourse(learned)
+      setLearnedByTopic(learnedTopic)
     }
     load()
   }, [])
@@ -125,18 +130,23 @@ export default function HomeScreen({ onStartSession, onOpenSync }: Props) {
                 <span className="course-total">{learned}/{total} →</span>
               </div>
               <div className="topic-chips">
-                {topics.map((t) => (
-                  <button
-                    key={t}
-                    className="topic-chip"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onStartSession(getCardsByTopic(course, t))
-                    }}
-                  >
-                    {t}
-                  </button>
-                ))}
+                {topics.map((t) => {
+                  const topicCards = getCardsByTopic(course, t)
+                  const topicLearned = learnedByTopic.get(`${course}/${t}`) ?? 0
+                  return (
+                    <button
+                      key={t}
+                      className="topic-chip"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onStartSession(topicCards)
+                      }}
+                    >
+                      <span className="chip-name">{t}</span>
+                      <span className="chip-progress">{topicLearned}/{topicCards.length}</span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
           )
