@@ -6,12 +6,48 @@ import { Card } from '../types'
 import './HomeScreen.css'
 
 const NEW_PER_DAY = 15
-// FSRS state: 0 = New, 1 = Learning, 2 = Review, 3 = Relearning
 const STATE_REVIEW = 2
 
 interface Props {
   onStartSession: (cards: Card[], practice?: boolean) => void
   onOpenSync: () => void
+}
+
+function ProgressRing({ value, max }: { value: number; max: number }) {
+  const size = 116
+  const stroke = 10
+  const r = (size - stroke) / 2
+  const circ = 2 * Math.PI * r
+  const ratio = max > 0 ? value / max : 0
+  const pct = Math.round(ratio * 100)
+  const offset = circ * (1 - ratio)
+
+  return (
+    <div className="ring-wrap" style={{ width: size, height: size }}>
+      <svg width={size} height={size} style={{ transform: 'rotate(-90deg)', display: 'block' }}>
+        <circle
+          cx={size / 2} cy={size / 2} r={r}
+          fill="none" stroke="var(--bg-elevated)" strokeWidth={stroke}
+        />
+        <circle
+          cx={size / 2} cy={size / 2} r={r}
+          fill="none" stroke="var(--accent)" strokeWidth={stroke}
+          strokeDasharray={circ}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          style={{
+            transition: 'stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)',
+            filter: ratio > 0 ? 'drop-shadow(0 0 6px rgba(247,76,0,0.55))' : 'none',
+          }}
+        />
+      </svg>
+      <div className="ring-inner">
+        <span className="ring-pct">{pct}%</span>
+        <span className="ring-sub">{value}/{max}</span>
+        <span className="ring-lbl">выучено</span>
+      </div>
+    </div>
+  )
 }
 
 export default function HomeScreen({ onStartSession, onOpenSync }: Props) {
@@ -21,16 +57,13 @@ export default function HomeScreen({ onStartSession, onOpenSync }: Props) {
   const [sessionCards, setSessionCards] = useState<Card[]>([])
   const [learnedByCourse, setLearnedByCourse] = useState<Map<string, number>>(new Map())
   const [learnedByTopic, setLearnedByTopic] = useState<Map<string, number>>(new Map())
+  const [totalCards, setTotalCards] = useState(0)
+  const [totalLearned, setTotalLearned] = useState(0)
 
   useEffect(() => {
     async function load() {
-      // pull progress from other devices before computing counters
       if (isSyncConfigured()) {
-        try {
-          await syncNow()
-        } catch {
-          // offline or token problem — fall back to local data
-        }
+        try { await syncNow() } catch { /* offline — use local */ }
       }
       const allCards = getAllCards()
       const allProgress = await getAllProgress()
@@ -53,20 +86,23 @@ export default function HomeScreen({ onStartSession, onOpenSync }: Props) {
       setNewCount(limitedNew.length)
       setReviewCount(dueReview.length)
       setStreak(await getStreak())
+      setTotalCards(allCards.length)
 
-      // learned = card reached Review state, not just "was seen once"
-      const learned = new Map<string, number>()
+      const learnedCourse = new Map<string, number>()
       const learnedTopic = new Map<string, number>()
+      let learnedTotal = 0
       for (const card of allCards) {
         const p = progressMap.get(card.id)
         if (p && p.state >= STATE_REVIEW) {
-          learned.set(card.course, (learned.get(card.course) ?? 0) + 1)
+          learnedCourse.set(card.course, (learnedCourse.get(card.course) ?? 0) + 1)
           const key = `${card.course}/${card.topic}`
           learnedTopic.set(key, (learnedTopic.get(key) ?? 0) + 1)
+          learnedTotal++
         }
       }
-      setLearnedByCourse(learned)
+      setLearnedByCourse(learnedCourse)
       setLearnedByTopic(learnedTopic)
+      setTotalLearned(learnedTotal)
     }
     load()
   }, [])
@@ -82,23 +118,56 @@ export default function HomeScreen({ onStartSession, onOpenSync }: Props) {
           <span className="logo-sep">::</span>
           <span className="logo-cards">cards</span>
         </div>
-        <button className="sync-btn" onClick={onOpenSync} aria-label="Синхронизация">
-          ⚙
-        </button>
+        <button className="sync-btn" onClick={onOpenSync} aria-label="Синхронизация">⚙</button>
       </header>
 
-      <div className="home-stats">
-        <div className="stat-card">
-          <div className="stat-value">{newCount}</div>
-          <div className="stat-label">новые</div>
+      {/* ── infographic card ── */}
+      <div className="infographic card-surface">
+        <div className="infographic-top">
+          <ProgressRing value={totalLearned} max={totalCards} />
+
+          <div className="mini-stats">
+            <div className="mini-stat">
+              <span className="mini-icon">🔥</span>
+              <div className="mini-body">
+                <span className="mini-val">{streak}</span>
+                <span className="mini-lbl">стрик</span>
+              </div>
+            </div>
+            <div className="mini-stat">
+              <span className="mini-icon">✨</span>
+              <div className="mini-body">
+                <span className="mini-val">{newCount}</span>
+                <span className="mini-lbl">новых</span>
+              </div>
+            </div>
+            <div className="mini-stat">
+              <span className="mini-icon accent">↻</span>
+              <div className="mini-body">
+                <span className="mini-val accent">{reviewCount}</span>
+                <span className="mini-lbl">повтор</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="stat-card">
-          <div className="stat-value accent">{reviewCount}</div>
-          <div className="stat-label">повторить</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-value">{streak}</div>
-          <div className="stat-label">🔥 стрик</div>
+
+        <div className="infographic-divider" />
+
+        <div className="course-bars">
+          {courses.map((course) => {
+            const total = getCardsByCourse(course).length
+            const learned = learnedByCourse.get(course) ?? 0
+            const pct = total > 0 ? (learned / total) * 100 : 0
+            return (
+              <div key={course} className="bar-row">
+                <span className="bar-name">{course}</span>
+                <div className="bar-track">
+                  <div className="bar-fill" style={{ width: `${pct}%` }} />
+                </div>
+                <span className="bar-count">{learned}/{total}</span>
+              </div>
+            )
+          })}
         </div>
       </div>
 
