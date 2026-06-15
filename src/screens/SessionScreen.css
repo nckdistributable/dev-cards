@@ -51,10 +51,13 @@
 
 .card-area {
   flex: 1;
+  /* min-width:0 is the key: flex items default to min-width:auto which
+     lets them expand beyond the container when children are wide.
+     Setting 0 constrains card-area to the screen width so overflow-x:hidden
+     actually clips the code block instead of the session-screen growing wider. */
+  min-width: 0;
   overflow-y: auto;
-  /* clip (not hidden) avoids creating a stacking context that breaks
-     overflow-y: auto on iOS Safari */
-  overflow-x: clip;
+  overflow-x: hidden;
   padding: 0.75rem 0.75rem 6rem;
   display: flex;
   flex-direction: column;
