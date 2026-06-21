@@ -1,0 +1,147 @@
+[
+  {
+    "id": "pyxis-proxy-001",
+    "course": "pyxis",
+    "topic": "proxy",
+    "level": "intermediate",
+    "type": "concept",
+    "concept": "Control plane управляет конфигурацией: пользователи, маршруты, квоты, пулы. Data plane переносит трафик: принимает соединение, аутентифицирует по in-memory кэшу, туннелирует байты. Разделение позволяет перезапускать control plane без прерывания соединений. Data plane должен быть stateless по отношению к внешним сервисам — никаких сетевых запросов на горячем пути.",
+    "question": "Почему data plane нельзя обращаться к control plane на горячем пути (на каждое соединение)?",
+    "explanation": "Каждый сетевой запрос добавляет 1–10ms latency к соединению клиента. При высоком трафике это накапливается и снижает throughput. Хуже — зависимость: если control plane лежит, data plane перестаёт принимать соединения. Правильная архитектура: control plane пушит конфиг (пользователей, квоты) в data plane при изменениях, data plane держит снимок в памяти. Падение control plane = data plane работает с последним известным состоянием."
+  },
+  {
+    "id": "pyxis-proxy-002",
+    "course": "pyxis",
+    "topic": "proxy",
+    "level": "intermediate",
+    "type": "choice",
+    "concept": "При старте соединения прокси проверяет учётные данные. Вариант A: запрос в PostgreSQL на каждое соединение. Вариант B: auth-кэш в памяти (HashMap<token, User>); при изменении пользователя control plane публикует событие в Redis pub/sub-канал; все data-plane ноды подписаны и сбрасывают нужную запись из кэша.",
+    "question": "Что произойдёт с data plane, если Redis pub/sub недоступен в момент инвалидации кэша пользователя?",
+    "options": [
+      "Нода продолжит работу со старым кэшем — eventual consistency; допустимо если у кэша есть TTL",
+      "Все соединения на данной ноде немедленно упадут",
+      "Data plane переключится на прямые запросы в PostgreSQL",
+      "Нода остановит приём новых соединений до восстановления Redis"
+    ],
+    "answer": 0,
+    "explanation": "Нода продолжит работать со старым кэшем — это acceptable: прокси работает, но инвалидация задержана. Чтобы ограничить окно несогласованности, кэш должен иметь TTL (например, 60–300 сек) независимо от pub/sub. Вариант «переключиться на PostgreSQL» разрушит изоляцию горячего пути от БД. Вариант «остановить приём» хуже, чем работа с устаревшим кэшем — это нарушение доступности ради консистентности там, где она не критична."
+  },
+  {
+    "id": "pyxis-proxy-003",
+    "course": "pyxis",
+    "topic": "proxy",
+    "level": "intermediate",
+    "type": "concept",
+    "concept": "HTTP CONNECT — текстовый: клиент пишет `CONNECT host:port HTTP/1.1`, получает `200 Connection established`, далее raw TCP-туннель. SOCKS5 — бинарный протокол с хэндшейком: выбор метода аутентификации → auth (username/password) → запрос (CONNECT / BIND / UDP ASSOCIATE). SOCKS5 поддерживает UDP и DNS-резолюцию на стороне прокси; HTTP CONNECT — только TCP.",
+    "question": "Какое ключевое преимущество SOCKS5 перед HTTP CONNECT как входного протокола прокси?",
+    "explanation": "SOCKS5 поддерживает UDP ASSOCIATE — это критично для DNS (UDP 53), VoIP, игровых протоколов. HTTP CONNECT туннелирует только TCP. Кроме того, SOCKS5 выполняет DNS-резолюцию на стороне прокси (клиент передаёт hostname, не IP) — что полезно для обхода DNS-лика. Для metadata (логин, session-id) оба протокола подходят: SOCKS5 через username/password фазу, HTTP CONNECT через заголовок Proxy-Authorization."
+  },
+  {
+    "id": "pyxis-proxy-004",
+    "course": "pyxis",
+    "topic": "proxy",
+    "level": "intermediate",
+    "type": "choice",
+    "concept": "Username-as-spec: клиент кодирует параметры маршрутизации прямо в поле username при SOCKS5/HTTP CONNECT. Например: `user-country-US-session-abc123` или `apikey_rotate_US_residential`. Data plane разбирает username при хэндшейке и без дополнительных запросов знает: пул, регион, rotation-политику.",
+    "question": "Почему параметры маршрутизации кодируют в username, а не передают отдельным API-запросом перед соединением?",
+    "options": [
+      "API-запрос добавляет latency и зависимость на горячем пути; username разбирается за O(1) без сети",
+      "Username — единственное поле SOCKS5 для передачи метаданных",
+      "API-запросы не работают при UDP ASSOCIATE",
+      "Это требование RFC 1928"
+    ],
+    "answer": 0,
+    "explanation": "Правило data plane: ноль сетевых запросов на горячем пути. Username разбирается split'ом по разделителю — O(1), in-process. API-вызов добавил бы 1–5ms RTT и единую точку отказа. Username — удобный «транспорт»: SOCKS5 позволяет до 255 байт для имени и пароля; HTTP CONNECT — Proxy-Authorization header без ограничений длины. Вариант «единственное поле» неверен — есть ещё password и custom-заголовки."
+  },
+  {
+    "id": "pyxis-proxy-005",
+    "course": "pyxis",
+    "topic": "proxy",
+    "level": "advanced",
+    "type": "concept",
+    "concept": "`tokio::io::copy_bidirectional` эффективно копирует данные между двумя async-потоками, но возвращает `(bytes_a_to_b, bytes_b_to_a)` только после закрытия обоих потоков (EOF). Для real-time квоты нужен счётчик, доступный во время копирования, и возможность прервать соединение при превышении. Решение: обёртка `TrafficStream<S>` реализует `AsyncRead`/`AsyncWrite`, инкрементирует `AtomicU64` в каждом `poll_read`/`poll_write`.",
+    "question": "Почему `tokio::io::copy_bidirectional` недостаточен для прокси с real-time квотой по трафику?",
+    "explanation": "copy_bidirectional — black box: байты копируются, но счётчик доступен только после EOF обоих сторон. Для квоты нужно: 1) читать накопленный трафик во время активного соединения; 2) прервать копирование при превышении лимита, не ожидая EOF. Реализация TrafficStream: в poll_read вызываем inner.poll_read, при Poll::Ready(Ok(n)) добавляем n к AtomicU64, при превышении квоты возвращаем Poll::Ready(Err(quota_exceeded)). Затем используем copy_bidirectional над двумя TrafficStream вместо сырых сокетов."
+  },
+  {
+    "id": "pyxis-proxy-006",
+    "course": "pyxis",
+    "topic": "proxy",
+    "level": "advanced",
+    "type": "concept",
+    "concept": "Двухуровневый учёт: (1) Real-time уровень — `AtomicU64` в памяти + `Redis DECRBY` чанками. Проверяет квоту немедленно, latency ~0.1ms. Допускает небольшую погрешность (in-flight данные). (2) Async биллинг-уровень — Kafka/Postgres, точные события с metadata (src, dst, timestamp, bytes) для инвойсов. Пишется после закрытия соединения, с задержкой, без потерь точности.",
+    "question": "Почему real-time квота и точный биллинг реализованы раздельно, а не через единую транзакцию в БД?",
+    "explanation": "PostgreSQL выдерживает ~5–10k TPS, а прокси может обрабатывать миллионы пакетов/сек. Транзакция на каждый чанк данных убьёт throughput. Redis DECRBY атомарна и выполняется за ~0.1ms — пригодна для hot path. Погрешность real-time уровня (±размер in-flight буфера, обычно < 1 MB) приемлема для квот. Инвойс требует точности до байта — пишется из полного события после закрытия соединения, когда все байты известны. Разделение позволяет каждому уровню использовать подходящий инструмент."
+  },
+  {
+    "id": "pyxis-proxy-007",
+    "course": "pyxis",
+    "topic": "proxy",
+    "level": "advanced",
+    "type": "choice",
+    "concept": "После закрытия соединения прокси пишет usage-событие (connection_id, bytes, timestamp) в Kafka. Exactly-once в Kafka требует idempotent producer + транзакционный API — это добавляет 2–10ms overhead. At-least-once: обычный publish с retry; дубликаты возможны при сбое.",
+    "question": "Почему для записи usage-событий на горячем пути выбирают at-least-once, а не exactly-once?",
+    "options": [
+      "Exactly-once добавляет latency на горячем пути; дедупликация дешевле на стороне потребителя",
+      "Kafka поддерживает только at-least-once семантику",
+      "Exactly-once невозможен при сетевых ошибках",
+      "Биллинг допускает потерю событий"
+    ],
+    "answer": 0,
+    "explanation": "Exactly-once в Kafka реализуется через транзакции продюсера (BEGIN TRANSACTION → SEND → COMMIT) — каждый flush блокируется на 2–10ms. При тысячах соединений/сек это неприемлемо. At-least-once: publish + retry без блокировок. Дубликаты редки (только при сбое), и обрабатываются потребителем через дедупликацию по (connection_id). Биллинг не должен терять события — вариант «допускает потерю» неверен. Exactly-once в Kafka возможен с 2017 (Kafka 0.11), вариант «только at-least-once» устарел."
+  },
+  {
+    "id": "pyxis-proxy-008",
+    "course": "pyxis",
+    "topic": "proxy",
+    "level": "intermediate",
+    "type": "concept",
+    "concept": "Rotating прокси выбирает новый upstream IP на каждое соединение. Sticky (static) прокси привязывает session к одному IP на весь TTL: Redis хранит `session_id → upstream_ip` с `EXPIRE`. При следующем запросе с тем же session_id data plane читает IP из Redis вместо random-выбора. TTL сессии должен совпадать с ожиданием клиента (обычно 10–30 мин).",
+    "question": "Что произойдёт со sticky-сессией, если закреплённый upstream-IP уходит в офлайн до истечения TTL?",
+    "explanation": "Простая реализация вернёт connection refused — клиент видит ошибку вместо прозрачного failover. Правильное решение: при ошибке подключения к sticky IP — выбрать следующий живой upstream из того же geo/пула, обновить Redis-запись с новым IP и тем же оставшимся TTL. Это нарушает «стабильность» IP, но сохраняет доступность. Альтернатива — кэшировать несколько запасных IP в той же Redis-записи (primary + fallbacks) и пробовать их по порядку без нового Redis-запроса."
+  },
+  {
+    "id": "pyxis-proxy-009",
+    "course": "pyxis",
+    "topic": "proxy",
+    "level": "advanced",
+    "type": "choice",
+    "concept": "Активный health-check: периодический TCP-пинг каждого upstream. Lazy health-check (circuit breaker): upstream помечается «подозрительным» после первой ошибки, удаляется из пула после K ошибок подряд, возвращается после успешного соединения или редкого background-пинга только подозрительных.",
+    "question": "Почему активный health-check (периодический TCP-пинг) неприменим к пулу из миллионов upstream IP?",
+    "options": [
+      "N×M ping-запросов/сек (upstream × ноды) создаёт flood на целевые серверы и перегружает сами ноды",
+      "TCP-пинг не показывает реальную доступность HTTP-прокси",
+      "Redis не может хранить статус миллионов IP",
+      "Активный пинг нарушает RFC 7230"
+    ],
+    "answer": 0,
+    "explanation": "При 1M upstream и пинге раз в 60 сек: 1M / 60 ≈ 16k req/sec только для проверок на одну ноду. При 10 нодах — 160k req/sec ping-трафика. Целевые серверы получают DDoS от «мониторинга». Lazy подход масштабируется O(реального трафика): upstream проверяется когда к нему пытаются подключиться — бесплатно. Подозрительные (после ошибок) пингуются раз в минуту — их единицы или тысячи, не миллионы. Вариант «Redis не справится» неверен — Redis легко держит миллионы ключей."
+  },
+  {
+    "id": "pyxis-proxy-010",
+    "course": "pyxis",
+    "topic": "proxy",
+    "level": "advanced",
+    "type": "concept",
+    "concept": "Redis `DECRBY` атомарна — нет race condition при параллельных соединениях. Overshoot возникает иначе: данные передаются потоком, квота декрементируется чанками (каждые N KB). К моменту декремента данные уже «в проводе» и переданы клиенту. Несколько соединений параллельно передают последний чанк — суммарный overshoot может составить (N_соединений × chunk_size).",
+    "question": "Как ограничить overshoot квоты при атомарном `DECRBY` в Redis?",
+    "explanation": "Уменьшить chunk size: вместо декремента раз в 1 MB — раз в 64 KB. Overshoot становится меньше, но растёт число Redis-запросов. Другой вариант: Lua-скрипт `if balance >= chunk then DECRBY else return error end` — атомарный check-and-decrement, overshoot исключён, но каждый чанк требует round-trip в Redis (~0.1ms). Компромисс: большой chunk для дешёвых тарифов, малый для тарифов у лимита. Для большинства систем overshoot в пределах нескольких MB от квоты является acceptable погрешностью и явно прописывается в ToS."
+  },
+  {
+    "id": "pyxis-proxy-011",
+    "course": "pyxis",
+    "topic": "proxy",
+    "level": "intermediate",
+    "type": "choice",
+    "concept": "GB-тариф: gateway проверяет квоту перед каждым чанком (Redis DECRBY → проверка результата → разрыв если < 0). Unlimited-тариф: проверка квоты пропускается через feature-flag или условие `if user.plan == Unlimited`. Учёт трафика (TrafficStream счётчик → Kafka → биллинг) остаётся одинаковым.",
+    "question": "Что изменяется в логике gateway при переключении пользователя с GB-тарифа на unlimited?",
+    "options": [
+      "Отключается проверка квоты на горячем пути, но учёт трафика и биллинг сохраняются",
+      "Трафик перестаёт учитываться — нет смысла считать байты без лимита",
+      "Меняется протокол туннелирования на более эффективный",
+      "Upstream-пул становится общим без geo-ограничений"
+    ],
+    "answer": 0,
+    "explanation": "Unlimited означает «без лимита», но не «без учёта». Биллинг (инвойс за период — даже если фиксированный), rate-limiting (защита от abuse — 100 Gbps за день выглядит подозрительно), аналитика (пиковая нагрузка, популярные регионы) — всё требует данных о трафике. Меняется только quota_check(): на unlimited это no-op или ранний return. Остальной pipeline (TrafficStream → AtomicU64 → Kafka event) идентичен для всех тарифов — это упрощает код и тестирование."
+  }
+]
