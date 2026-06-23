@@ -5,9 +5,9 @@
     "topic": "lifetimes",
     "level": "beginner",
     "type": "concept",
-    "concept": "Lifetime — compile-time метка, которая описывает, как долго действительна ссылка. В рантайме lifetime не существует: ноль overhead, никаких структур данных. Аннотации 'a — это подсказки borrow checker'у о связях между ссылками, а не инструкции для процессора.",
-    "question": "Что такое lifetime в Rust?",
-    "explanation": "Borrow checker строит граф lifetimes: для каждой ссылки вычисляется интервал [точка_создания, последнее_использование]. Компилятор проверяет, что данные живут дольше этого интервала. Если нарушение найдено — compile error, в бинарный код это не попадает. Большинство lifetime выводятся автоматически (elision rules) — явные 'a нужны только когда компилятор не может вывести их сам из сигнатуры."
+    "concept": "A lifetime is a compile-time label that describes how long a reference is valid. At runtime lifetimes do not exist: zero overhead, no data structures. The 'a annotations are hints to the borrow checker about the relationships between references, not instructions for the processor.",
+    "question": "What is a lifetime in Rust?",
+    "explanation": "The borrow checker builds a graph of lifetimes: for each reference it computes an interval [creation_point, last_use]. The compiler checks that the data outlives this interval. If a violation is found, it's a compile error and never makes it into the binary. Most lifetimes are inferred automatically (elision rules) — explicit 'a is only needed when the compiler cannot infer it from the signature on its own."
   },
   {
     "id": "rust-lifetimes-002",
@@ -15,13 +15,13 @@
     "topic": "lifetimes",
     "level": "beginner",
     "type": "compiles",
-    "concept": "Аннотация lifetime записывается как 'a. Она говорит: возвращаемая ссылка живёт не дольше, чем оба аргумента.",
+    "concept": "A lifetime annotation is written as 'a. It says: the returned reference lives no longer than both arguments.",
     "code": "fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {\n    if x.len() > y.len() { x } else { y }\n}\nfn main() {\n    let s1 = String::from(\"long\");\n    let result;\n    {\n        let s2 = String::from(\"xy\");\n        result = longest(s1.as_str(), s2.as_str());\n        println!(\"{}\", result);\n    }\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Will this code compile?",
+    "options": ["Yes", "No"],
     "answer": 0,
     "expected": "compiles",
-    "explanation": "Да. result используется внутри внутреннего блока, где s2 ещё живёт. Lifetime 'a = min(lifetime s1, lifetime s2). println! находится до выхода s2 из области — всё ок."
+    "explanation": "Yes. result is used inside the inner block, where s2 is still alive. Lifetime 'a = min(lifetime of s1, lifetime of s2). The println! call happens before s2 goes out of scope, so everything is fine."
   },
   {
     "id": "rust-lifetimes-003",
@@ -29,13 +29,13 @@
     "topic": "lifetimes",
     "level": "intermediate",
     "type": "compiles",
-    "concept": "Lifetime возвращаемой ссылки должно быть не больше, чем время жизни источника. Если result живёт дольше s2, компилятор откажет.",
+    "concept": "The lifetime of the returned reference must not exceed the lifetime of its source. If result lives longer than s2, the compiler will reject it.",
     "code": "fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {\n    if x.len() > y.len() { x } else { y }\n}\nfn main() {\n    let s1 = String::from(\"long\");\n    let result;\n    {\n        let s2 = String::from(\"xy\");\n        result = longest(s1.as_str(), s2.as_str());\n    }\n    println!(\"{}\", result);\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Will this code compile?",
+    "options": ["Yes", "No"],
     "answer": 1,
     "expected": "fails",
-    "explanation": "Нет. result используется вне блока, где живёт s2. Lifetime 'a = min(s1, s2) = s2. result переживает s2. Ошибка: `error[E0597]: `s2` does not live long enough`."
+    "explanation": "No. result is used outside the block where s2 lives. Lifetime 'a = min(s1, s2) = s2. result outlives s2. Error: `error[E0597]: `s2` does not live long enough`."
   },
   {
     "id": "rust-lifetimes-004",
@@ -43,9 +43,9 @@
     "topic": "lifetimes",
     "level": "intermediate",
     "type": "concept",
-    "concept": "Lifetime elision rules: 1) каждый &-параметр получает свой lifetime; 2) если один входной — применяется к output; 3) если один из входных &self — его lifetime применяется к output.",
-    "question": "Зачем нужны правила lifetime elision?",
-    "explanation": "Elision rules позволяют не писать lifetime в очевидных случаях. Компилятор выводит их сам. Правила: 1) каждый &-параметр получает свой lifetime; 2) единственный входной заполняет output; 3) &self заполняет output в методах."
+    "concept": "Lifetime elision rules: 1) each & parameter gets its own lifetime; 2) if there is exactly one input lifetime, it is applied to the output; 3) if one of the inputs is &self, its lifetime is applied to the output.",
+    "question": "Why are lifetime elision rules needed?",
+    "explanation": "Elision rules let you skip writing lifetimes in obvious cases. The compiler infers them itself. The rules: 1) each & parameter gets its own lifetime; 2) a single input lifetime fills the output; 3) &self fills the output in methods."
   },
   {
     "id": "rust-lifetimes-005",
@@ -53,13 +53,13 @@
     "topic": "lifetimes",
     "level": "intermediate",
     "type": "compiles",
-    "concept": "'static lifetime — значение живёт всю программу. Строковые литералы &str имеют тип &'static str — они хранятся в сегменте данных бинарника.",
+    "concept": "The 'static lifetime means the value lives for the entire program. String literals &str have the type &'static str — they are stored in the binary's data segment.",
     "code": "fn get_str() -> &'static str {\n    \"hello\"\n}\nfn main() {\n    let s = get_str();\n    println!(\"{}\", s);\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Will this code compile?",
+    "options": ["Yes", "No"],
     "answer": 0,
     "expected": "compiles",
-    "explanation": "Да. \"hello\" — строковый литерал &'static str. Он хранится в read-only сегменте бинарника и живёт всю программу. Вывод: hello."
+    "explanation": "Yes. \"hello\" is a string literal of type &'static str. It is stored in the binary's read-only segment and lives for the entire program. Output: hello."
   },
   {
     "id": "rust-lifetimes-006",
@@ -67,13 +67,13 @@
     "topic": "lifetimes",
     "level": "advanced",
     "type": "compiles",
-    "concept": "Lifetime в структуре говорит: фиель ссылки не переживёт структуру. Без аннотации компилятор не знает, какой lifetime у ссылки.",
+    "concept": "A lifetime in a struct says: the reference field will not outlive the struct. Without the annotation the compiler doesn't know the reference's lifetime.",
     "code": "struct Important<'a> {\n    part: &'a str,\n}\nfn main() {\n    let text = String::from(\"long text here\");\n    let i = Important { part: text.as_str() };\n    println!(\"{}\", i.part);\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Will this code compile?",
+    "options": ["Yes", "No"],
     "answer": 0,
     "expected": "compiles",
-    "explanation": "Да. Important<'a> объявляет: объект не переживёт ссылку, на которую указывает part. text живёт дольше i, поэтому всё корректно. Вывод: long text here."
+    "explanation": "Yes. Important<'a> declares: the object will not outlive the reference that part points to. text lives longer than i, so everything is correct. Output: long text here."
   },
   {
     "id": "rust-lifetimes-007",
@@ -81,13 +81,13 @@
     "topic": "lifetimes",
     "level": "advanced",
     "type": "compiles",
-    "concept": "Higher-ranked trait bounds (HRTB) `for<'a>` позволяют описывать трейты, работающие с любым lifetime — чаще всего для замыканий.",
+    "concept": "Higher-ranked trait bounds (HRTB) `for<'a>` let you describe traits that work with any lifetime — most often for closures.",
     "code": "fn apply<F>(f: F, s: &str) -> usize\nwhere\n    F: for<'a> Fn(&'a str) -> usize,\n{\n    f(s)\n}\nfn main() {\n    let n = apply(|s| s.len(), \"hello\");\n    println!(\"{}\", n);\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Will this code compile?",
+    "options": ["Yes", "No"],
     "answer": 0,
     "expected": "compiles",
-    "explanation": "Да. `for<'a> Fn(&'a str) -> usize` — HRTB, означает «для любого lifetime 'a». Замыкание |s| s.len() удовлетворяет этому. Вывод: 5."
+    "explanation": "Yes. `for<'a> Fn(&'a str) -> usize` is an HRTB, meaning \"for any lifetime 'a\". The closure |s| s.len() satisfies it. Output: 5."
   },
   {
     "id": "rust-lifetimes-008",
@@ -95,11 +95,11 @@
     "topic": "lifetimes",
     "level": "advanced",
     "type": "choice",
-    "concept": "Variance в Rust: covariant (длинный lifetime принимается вместо короткого), invariant (&mut T — нельзя заменять lifetime).",
-    "question": "Какой lifetime допустим в &'a str, если требуется &'short str?",
-    "options": ["Только точно такой же", "Любой lifetime дольше short", "Любой lifetime короче short", "Никакой"],
+    "concept": "Variance in Rust: covariant (a longer lifetime is accepted in place of a shorter one), invariant (&mut T — the lifetime cannot be substituted).",
+    "question": "Which lifetime is acceptable for &'a str when &'short str is required?",
+    "options": ["Only exactly the same", "Any lifetime longer than short", "Any lifetime shorter than short", "None"],
     "answer": 1,
-    "explanation": "&'a str ковариантен по lifetime. Переменную типа &'long str можно передать туда, где ожидается &'short str, так как долгая ссылка удовлетворяет короткому требованию. Обратное неверно."
+    "explanation": "&'a str is covariant in its lifetime. A variable of type &'long str can be passed where &'short str is expected, since a longer reference satisfies the shorter requirement. The reverse is not true."
   },
   {
     "id": "rust-lifetimes-009",
@@ -107,9 +107,9 @@
     "topic": "lifetimes",
     "level": "advanced",
     "type": "concept",
-    "concept": "HRTB (Higher-Ranked Trait Bounds) — `for<'a>` означает «для ЛЮБОГО lifetime 'a», тогда как обычный `<'a>` означает «для ОДНОГО конкретного lifetime, который выбирает вызывающая сторона». HRTB нужен, когда функция или замыкание должны работать с ссылками произвольной длины жизни — в том числе с временными ссылками, создаваемыми внутри тела функции.",
-    "question": "Чем `for<'a> Fn(&'a str)` отличается от `Fn(&'a str)` с обычным параметром `'a`?",
-    "explanation": "С обычным `<'a>` вызывающая сторона выбирает конкретный lifetime — замыкание работает только с ссылками этой длины жизни. С `for<'a>` замыкание обязано работать с ссылками ЛЮБОЙ длины жизни, включая очень короткие (например, ссылки на временные значения внутри функции). Мысленная модель: обычный `'a` — «выбери lifetime заранее», `for<'a>` — «должно работать для всех возможных lifetime». На практике большинство замыканий вида `|s: &str| s.len()` автоматически выводятся компилятором как HRTB — писать `for<'a>` вручную приходится редко, в основном при работе с trait-объектами: `Box<dyn for<'a> Fn(&'a str) -> usize>`."
+    "concept": "HRTB (Higher-Ranked Trait Bounds) — `for<'a>` means \"for ANY lifetime 'a\", whereas an ordinary `<'a>` means \"for ONE specific lifetime chosen by the caller\". HRTB is needed when a function or closure must work with references of arbitrary lifetime — including temporary references created inside the function body.",
+    "question": "How does `for<'a> Fn(&'a str)` differ from `Fn(&'a str)` with an ordinary parameter `'a`?",
+    "explanation": "With an ordinary `<'a>` the caller chooses a specific lifetime — the closure works only with references of that lifetime. With `for<'a>` the closure must work with references of ANY lifetime, including very short ones (for example, references to temporary values inside the function). Mental model: an ordinary `'a` is \"pick a lifetime in advance\", `for<'a>` is \"must work for all possible lifetimes\". In practice most closures of the form `|s: &str| s.len()` are automatically inferred by the compiler as HRTB — writing `for<'a>` by hand is rarely needed, mainly when working with trait objects: `Box<dyn for<'a> Fn(&'a str) -> usize>`."
   },
   {
     "id": "rust-lifetimes-010",
@@ -117,15 +117,15 @@
     "topic": "lifetimes",
     "level": "advanced",
     "type": "choice",
-    "concept": "Когда нужно принять замыкание, которое должно работать с ссылкой любой длины жизни (в том числе созданной внутри функции), обычного параметра `'a` недостаточно — нужен HRTB.",
-    "question": "Какое ограничение корректно выражает «замыкание F принимает &str с ЛЮБЫМ lifetime»?",
+    "concept": "When you need to accept a closure that must work with a reference of any lifetime (including one created inside the function), an ordinary `'a` parameter is not enough — you need an HRTB.",
+    "question": "Which bound correctly expresses \"closure F accepts &str with ANY lifetime\"?",
     "options": [
       "F: Fn(&'static str) -> usize",
       "F: for<'a> Fn(&'a str) -> usize",
       "F: Fn<'a>(&'a str) -> usize",
-      "F: Fn(&str) -> usize где 'a: 'static"
+      "F: Fn(&str) -> usize where 'a: 'static"
     ],
     "answer": 1,
-    "explanation": "`for<'a> Fn(&'a str) -> usize` — HRTB: компилятор проверяет, что F работает для всех возможных lifetimes 'a. Вариант с `&'static str` ограничивает только статическими строками. Синтаксис `Fn<'a>(...)` неверный. Четвёртый вариант бессмысленен: `'a: 'static` нет в сигнатуре F."
+    "explanation": "`for<'a> Fn(&'a str) -> usize` is an HRTB: the compiler checks that F works for all possible lifetimes 'a. The variant with `&'static str` restricts it to static strings only. The syntax `Fn<'a>(...)` is invalid. The fourth variant is meaningless: there is no `'a: 'static` in the signature of F."
   }
 ]

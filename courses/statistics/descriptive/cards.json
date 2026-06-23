@@ -5,9 +5,9 @@
     "topic": "descriptive",
     "level": "beginner",
     "type": "concept",
-    "concept": "Среднее арифметическое (mean) — сумма всех значений, делённая на их количество: μ = (x₁ + x₂ + … + xₙ) / n. Это наиболее распространённая мера центральной тенденции.",
-    "question": "Что такое среднее арифметическое и в чём его главный недостаток?",
-    "explanation": "Mean чувствителен к выбросам: одно аномальное значение существенно смещает результат. Поэтому для скошенных распределений (доходы, цены на недвижимость) предпочтительна медиана — она не зависит от экстремальных значений."
+    "concept": "The arithmetic mean is the sum of all values divided by their count: μ = (x₁ + x₂ + … + xₙ) / n. It is the most common measure of central tendency.",
+    "question": "What is the arithmetic mean and what is its main drawback?",
+    "explanation": "The mean is sensitive to outliers: a single anomalous value shifts the result substantially. That is why for skewed distributions (incomes, real estate prices) the median is preferred — it does not depend on extreme values."
   },
   {
     "id": "statistics-descriptive-002",
@@ -15,11 +15,11 @@
     "topic": "descriptive",
     "level": "beginner",
     "type": "choice",
-    "concept": "Медиана — значение, которое делит упорядоченный ряд пополам. При чётном числе элементов медиана равна среднему двух центральных значений.",
-    "question": "Найди медиану ряда [3, 1, 4, 1, 5, 9, 2, 6].",
+    "concept": "The median is the value that splits an ordered set in half. For an even number of elements, the median equals the average of the two central values.",
+    "question": "Find the median of the set [3, 1, 4, 1, 5, 9, 2, 6].",
     "options": ["3", "3.5", "4", "2.5"],
     "answer": 1,
-    "explanation": "Сортируем: [1, 1, 2, 3, 4, 5, 6, 9]. Восемь элементов — чётное число. Медиана = (3 + 4) / 2 = 3.5. Медиана не зависит от крайних значений, поэтому устойчива к выбросам в отличие от среднего."
+    "explanation": "Sorted: [1, 1, 2, 3, 4, 5, 6, 9]. Eight elements — an even number. Median = (3 + 4) / 2 = 3.5. The median does not depend on the extreme values, so it is robust to outliers unlike the mean."
   },
   {
     "id": "statistics-descriptive-003",
@@ -27,9 +27,9 @@
     "topic": "descriptive",
     "level": "beginner",
     "type": "concept",
-    "concept": "Дисперсия (variance) измеряет средний квадрат отклонения значений от среднего. Генеральная: σ² = Σ(xᵢ - μ)² / n. Выборочная с поправкой Бесселя: s² = Σ(xᵢ - x̄)² / (n-1).",
-    "question": "В чём разница между выборочной и генеральной дисперсией?",
-    "explanation": "Поправка Бесселя (деление на n-1 вместо n) нужна потому, что x̄ уже «использовало» одну степень свободы данных. Без неё выборочная дисперсия систематически занижает истинную σ². При больших n разница несущественна."
+    "concept": "Variance measures the average squared deviation of values from the mean. Population: σ² = Σ(xᵢ - μ)² / n. Sample with Bessel's correction: s² = Σ(xᵢ - x̄)² / (n-1).",
+    "question": "What is the difference between sample variance and population variance?",
+    "explanation": "Bessel's correction (dividing by n-1 instead of n) is needed because x̄ has already 'used up' one degree of freedom of the data. Without it, the sample variance systematically underestimates the true σ². For large n the difference is negligible."
   },
   {
     "id": "statistics-descriptive-004",
@@ -37,11 +37,11 @@
     "topic": "descriptive",
     "level": "beginner",
     "type": "fill",
-    "concept": "Выборочная дисперсия использует поправку Бесселя для получения несмещённой оценки дисперсии генеральной совокупности.",
-    "question": "Выборочная дисперсия: s² = Σ(xᵢ - x̄)² / ___",
+    "concept": "Sample variance uses Bessel's correction to obtain an unbiased estimate of the population variance.",
+    "question": "Sample variance: s² = Σ(xᵢ - x̄)² / ___",
     "options": ["n", "n-1", "n+1", "2n"],
     "answer": 1,
-    "explanation": "Делим на n-1, потому что оцениваем μ через x̄ — это стоит одну степень свободы. Деление на n даёт смещённую оценку, которая систематически оказывается меньше истинной σ². При n→∞ разница исчезает."
+    "explanation": "We divide by n-1 because we estimate μ via x̄ — this costs one degree of freedom. Dividing by n gives a biased estimate that is systematically smaller than the true σ². As n→∞ the difference vanishes."
   },
   {
     "id": "statistics-descriptive-005",
@@ -49,13 +49,13 @@
     "topic": "descriptive",
     "level": "beginner",
     "type": "output",
-    "concept": "В Python среднее вычисляется через sum() / len(). Оператор деления / всегда возвращает float.",
+    "concept": "In Python the mean is computed as sum() / len(). The division operator / always returns a float.",
     "code": "data = [2, 4, 4, 4, 5, 5, 7, 9]\nmean = sum(data) / len(data)\nprint(mean)",
-    "question": "Что выведет программа?",
+    "question": "What will the program output?",
     "options": ["4.5", "5.0", "4.0", "5.5"],
     "answer": 1,
     "expected_output": "5.0",
-    "explanation": "Сумма: 2+4+4+4+5+5+7+9 = 40. Количество: 8. Mean = 40 / 8 = 5.0. Python выводит 5.0 (float), а не 5 (int), потому что / — всегда деление с плавающей точкой. Используй // для целочисленного деления."
+    "explanation": "Sum: 2+4+4+4+5+5+7+9 = 40. Count: 8. Mean = 40 / 8 = 5.0. Python prints 5.0 (float), not 5 (int), because / is always floating-point division. Use // for integer division."
   },
   {
     "id": "statistics-descriptive-006",
@@ -63,11 +63,11 @@
     "topic": "descriptive",
     "level": "beginner",
     "type": "choice",
-    "concept": "Мода (mode) — наиболее часто встречающееся значение. Набор может быть унимодальным, бимодальным или не иметь моды совсем.",
-    "question": "Какова мода ряда [1, 2, 2, 3, 3, 3, 4, 4]?",
-    "options": ["2", "3", "4", "2 и 3"],
+    "concept": "The mode is the most frequently occurring value. A dataset can be unimodal, bimodal, or have no mode at all.",
+    "question": "What is the mode of the set [1, 2, 2, 3, 3, 3, 4, 4]?",
+    "options": ["2", "3", "4", "2 and 3"],
     "answer": 1,
-    "explanation": "Значение 3 встречается трижды — чаще остальных (1 — один раз, 2 — два раза, 4 — два раза). Ряд унимодален. Мода — единственная мера центральной тенденции, применимая к номинальным данным (например, к наиболее популярному цвету)."
+    "explanation": "The value 3 occurs three times — more often than the rest (1 once, 2 twice, 4 twice). The set is unimodal. The mode is the only measure of central tendency applicable to nominal data (for example, the most popular color)."
   },
   {
     "id": "statistics-descriptive-007",
@@ -75,9 +75,9 @@
     "topic": "descriptive",
     "level": "beginner",
     "type": "concept",
-    "concept": "Стандартное отклонение (σ или s) — квадратный корень из дисперсии. Выражается в тех же единицах, что и исходные данные, в отличие от дисперсии.",
-    "question": "Почему стандартное отклонение удобнее дисперсии для интерпретации?",
-    "explanation": "Дисперсия измеряется в квадратных единицах (если данные в см, дисперсия в см²), что неинтуитивно. Стандартное отклонение возвращается к исходным единицам: σ=5 см означает, что типичное отклонение от среднего составляет 5 см. Это делает его удобным для сравнения с самими данными."
+    "concept": "The standard deviation (σ or s) is the square root of the variance. It is expressed in the same units as the original data, unlike the variance.",
+    "question": "Why is the standard deviation more convenient than the variance for interpretation?",
+    "explanation": "Variance is measured in squared units (if the data are in cm, the variance is in cm²), which is unintuitive. The standard deviation returns to the original units: σ=5 cm means that the typical deviation from the mean is 5 cm. This makes it convenient to compare with the data itself."
   },
   {
     "id": "statistics-descriptive-008",
@@ -85,11 +85,11 @@
     "topic": "descriptive",
     "level": "beginner",
     "type": "choice",
-    "concept": "Межквартильный размах (IQR) = Q3 - Q1. Охватывает центральные 50% данных и устойчив к выбросам, в отличие от полного размаха (Max - Min).",
-    "question": "Как вычислить межквартильный размах (IQR)?",
+    "concept": "The interquartile range (IQR) = Q3 - Q1. It covers the central 50% of the data and is robust to outliers, unlike the full range (Max - Min).",
+    "question": "How is the interquartile range (IQR) computed?",
     "options": ["Q2 - Q1", "Q3 - Q1", "Q3 - Q2", "Max - Min"],
     "answer": 1,
-    "explanation": "IQR = Q3 - Q1, где Q3 = P75, Q1 = P25. IQR используется для обнаружения выбросов: значения за пределами [Q1 - 1.5·IQR, Q3 + 1.5·IQR] считаются потенциальными выбросами (правило Тьюки). Размах (Max-Min) крайне чувствителен к одному выбросу."
+    "explanation": "IQR = Q3 - Q1, where Q3 = P75, Q1 = P25. The IQR is used to detect outliers: values outside [Q1 - 1.5·IQR, Q3 + 1.5·IQR] are considered potential outliers (Tukey's rule). The range (Max-Min) is extremely sensitive to a single outlier."
   },
   {
     "id": "statistics-descriptive-009",
@@ -97,11 +97,11 @@
     "topic": "descriptive",
     "level": "intermediate",
     "type": "fill",
-    "concept": "Z-оценка (z-score) показывает, на сколько стандартных отклонений значение отличается от среднего. Используется для стандартизации данных из разных распределений.",
-    "question": "Формула z-оценки: z = (x - μ) / ___",
+    "concept": "The z-score shows how many standard deviations a value differs from the mean. It is used to standardize data from different distributions.",
+    "question": "The z-score formula: z = (x - μ) / ___",
     "options": ["σ", "σ²", "n", "√n"],
     "answer": 0,
-    "explanation": "Делим на σ (стандартное отклонение), не на дисперсию σ². Это переводит значение в единицы стандартных отклонений: z=2 означает, что x на 2σ выше среднего. Стандартизованные данные имеют mean=0 и σ=1, что позволяет сравнивать величины из разных шкал."
+    "explanation": "We divide by σ (the standard deviation), not by the variance σ². This converts the value into units of standard deviations: z=2 means that x is 2σ above the mean. Standardized data have mean=0 and σ=1, which allows comparing quantities from different scales."
   },
   {
     "id": "statistics-descriptive-010",
@@ -109,9 +109,9 @@
     "topic": "descriptive",
     "level": "intermediate",
     "type": "concept",
-    "concept": "Асимметрия (skewness) характеризует несимметричность распределения. Положительная (правосторонняя): длинный правый хвост, mean > median. Отрицательная (левосторонняя): длинный левый хвост, mean < median.",
-    "question": "Как соотносятся mean и median при положительной асимметрии?",
-    "explanation": "При правостороннем скосе редкие большие значения «тянут» среднее вправо (mean > median). Классический пример — распределение доходов: большинство зарабатывает около медианы, но несколько человек с огромными доходами резко поднимают среднее. Именно поэтому статистика доходов публикует медиану."
+    "concept": "Skewness characterizes the asymmetry of a distribution. Positive (right-skewed): long right tail, mean > median. Negative (left-skewed): long left tail, mean < median.",
+    "question": "How do the mean and median relate under positive skewness?",
+    "explanation": "Under right skew, rare large values 'pull' the mean to the right (mean > median). A classic example is the income distribution: most people earn around the median, but a few people with enormous incomes sharply raise the mean. This is exactly why income statistics report the median."
   },
   {
     "id": "statistics-descriptive-011",
@@ -119,13 +119,13 @@
     "topic": "descriptive",
     "level": "beginner",
     "type": "output",
-    "concept": "Дисперсия генеральной совокупности: σ² = Σ(xᵢ - μ)² / n.",
+    "concept": "Population variance: σ² = Σ(xᵢ - μ)² / n.",
     "code": "data = [2, 4, 4, 4, 5, 5, 7, 9]\nmu = 5.0\nvariance = sum((x - mu)**2 for x in data) / len(data)\nprint(variance)",
-    "question": "Что выведет программа?",
+    "question": "What will the program output?",
     "options": ["3.5", "4.0", "4.57", "32.0"],
     "answer": 1,
     "expected_output": "4.0",
-    "explanation": "Отклонения от μ=5: (-3)²=9, (-1)²=1, (-1)²=1, (-1)²=1, 0, 0, 4, 16. Сумма квадратов = 32. Делим на n=8: 32/8 = 4.0. Если бы считали выборочную дисперсию (n-1=7), получили бы 32/7 ≈ 4.57."
+    "explanation": "Deviations from μ=5: (-3)²=9, (-1)²=1, (-1)²=1, (-1)²=1, 0, 0, 4, 16. Sum of squares = 32. Divide by n=8: 32/8 = 4.0. If we computed the sample variance (n-1=7), we would get 32/7 ≈ 4.57."
   },
   {
     "id": "statistics-descriptive-012",
@@ -133,10 +133,10 @@
     "topic": "descriptive",
     "level": "intermediate",
     "type": "choice",
-    "concept": "Процентиль p — значение, ниже которого лежит p% наблюдений. Квартили: Q1=P25, Q2=P50 (медиана), Q3=P75.",
-    "question": "Чему равен 50-й процентиль выборки?",
-    "options": ["Среднему (mean)", "Медиане (median)", "Моде (mode)", "Q3"],
+    "concept": "A percentile p is the value below which p% of observations lie. Quartiles: Q1=P25, Q2=P50 (median), Q3=P75.",
+    "question": "What does the 50th percentile of a sample equal?",
+    "options": ["The mean", "The median", "The mode", "Q3"],
     "answer": 1,
-    "explanation": "P50 = медиана: ровно 50% значений лежит ниже этой точки. Это одно из определений медианы. Q1 = P25, Q3 = P75. Среднее и медиана совпадают только для симметричных распределений; для скошенных данных P50 — более надёжная мера центра."
+    "explanation": "P50 = the median: exactly 50% of values lie below this point. This is one of the definitions of the median. Q1 = P25, Q3 = P75. The mean and median coincide only for symmetric distributions; for skewed data P50 is a more reliable measure of the center."
   }
 ]

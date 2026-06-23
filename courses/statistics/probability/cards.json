@@ -5,9 +5,9 @@
     "topic": "probability",
     "level": "beginner",
     "type": "concept",
-    "concept": "Вероятность события — число от 0 до 1. Аксиомы Колмогорова: P(A) ≥ 0; P(Ω) = 1 (достоверное событие); для несовместных событий P(A∪B) = P(A) + P(B).",
-    "question": "Каковы три аксиомы теории вероятностей Колмогорова?",
-    "explanation": "Три аксиомы определяют всю теорию вероятностей. Из них выводятся все свойства: P(∅)=0, P(Ā)=1-P(A), монотонность. Ключевое ограничение третьей аксиомы — события должны быть несовместны (не могут произойти одновременно) для прямого сложения."
+    "concept": "The probability of an event is a number between 0 and 1. Kolmogorov's axioms: P(A) ≥ 0; P(Ω) = 1 (the certain event); for mutually exclusive events P(A∪B) = P(A) + P(B).",
+    "question": "What are the three Kolmogorov axioms of probability theory?",
+    "explanation": "The three axioms define the whole of probability theory. All properties are derived from them: P(∅)=0, P(Ā)=1-P(A), monotonicity. The key restriction of the third axiom is that the events must be mutually exclusive (cannot occur simultaneously) for direct addition."
   },
   {
     "id": "statistics-probability-002",
@@ -15,8 +15,8 @@
     "topic": "probability",
     "level": "beginner",
     "type": "choice",
-    "concept": "Формула сложения для совместных событий учитывает пересечение, иначе P(A∩B) будет учтена дважды.",
-    "question": "Чему равно P(A ∪ B) для произвольных событий?",
+    "concept": "The addition rule for non-exclusive events accounts for the intersection, otherwise P(A∩B) would be counted twice.",
+    "question": "What does P(A ∪ B) equal for arbitrary events?",
     "options": [
       "P(A) + P(B)",
       "P(A) + P(B) - P(A∩B)",
@@ -24,7 +24,7 @@
       "P(A) + P(B) + P(A∩B)"
     ],
     "answer": 1,
-    "explanation": "P(A∪B) = P(A) + P(B) - P(A∩B). Вычитаем P(A∩B), потому что при сложении P(A) и P(B) пересечение A∩B учитывается дважды. Если события несовместны (A∩B = ∅), то P(A∩B)=0 и формула упрощается до P(A)+P(B)."
+    "explanation": "P(A∪B) = P(A) + P(B) - P(A∩B). We subtract P(A∩B) because when adding P(A) and P(B) the intersection A∩B is counted twice. If the events are mutually exclusive (A∩B = ∅), then P(A∩B)=0 and the formula simplifies to P(A)+P(B)."
   },
   {
     "id": "statistics-probability-003",
@@ -32,9 +32,9 @@
     "topic": "probability",
     "level": "beginner",
     "type": "concept",
-    "concept": "Условная вероятность P(A|B) — вероятность события A при условии, что B уже произошло: P(A|B) = P(A∩B) / P(B). Сужает пространство исходов до события B.",
-    "question": "Что такое условная вероятность и как она связана с независимостью событий?",
-    "explanation": "P(A|B) пересчитывает вероятность с учётом новой информации. Если P(A|B) = P(A), события независимы — знание о B ничего не меняет для A. Условная вероятность лежит в основе байесовского обновления знаний."
+    "concept": "The conditional probability P(A|B) is the probability of event A given that B has already occurred: P(A|B) = P(A∩B) / P(B). It narrows the outcome space down to event B.",
+    "question": "What is conditional probability and how does it relate to the independence of events?",
+    "explanation": "P(A|B) recomputes the probability in light of new information. If P(A|B) = P(A), the events are independent — knowing about B changes nothing for A. Conditional probability underlies the Bayesian updating of knowledge."
   },
   {
     "id": "statistics-probability-004",
@@ -42,11 +42,11 @@
     "topic": "probability",
     "level": "intermediate",
     "type": "fill",
-    "concept": "Теорема Байеса позволяет обратить условную вероятность: P(A|B) = P(B|A) · P(A) / P(B). Используется для обновления убеждений при получении новых данных.",
-    "question": "Теорема Байеса: P(A|B) = P(B|A) · P(A) / ___",
+    "concept": "Bayes' theorem lets you invert a conditional probability: P(A|B) = P(B|A) · P(A) / P(B). It is used to update beliefs as new data arrive.",
+    "question": "Bayes' theorem: P(A|B) = P(B|A) · P(A) / ___",
     "options": ["P(B)", "P(A)", "P(A∩B)", "P(B|A)"],
     "answer": 0,
-    "explanation": "Знаменатель P(B) — полная вероятность наблюдаемого события B. P(A) — априорная вероятность (prior), P(A|B) — апостериорная (posterior). Байесовский подход: начинаем с prior, обновляем через данные, получаем posterior. Это основа байесовской статистики."
+    "explanation": "The denominator P(B) is the total probability of the observed event B. P(A) is the prior probability, P(A|B) is the posterior. The Bayesian approach: start with the prior, update via data, obtain the posterior. This is the foundation of Bayesian statistics."
   },
   {
     "id": "statistics-probability-005",
@@ -54,8 +54,8 @@
     "topic": "probability",
     "level": "beginner",
     "type": "choice",
-    "concept": "События A и B независимы, если наступление одного не влияет на вероятность другого: P(A∩B) = P(A) · P(B).",
-    "question": "Какое условие выполняется для независимых событий A и B?",
+    "concept": "Events A and B are independent if the occurrence of one does not affect the probability of the other: P(A∩B) = P(A) · P(B).",
+    "question": "Which condition holds for independent events A and B?",
     "options": [
       "P(A∩B) = P(A) + P(B)",
       "P(A|B) = P(B|A)",
@@ -63,7 +63,7 @@
       "P(A∪B) = 1"
     ],
     "answer": 2,
-    "explanation": "P(A∩B) = P(A)·P(B) — критерий независимости. Из него следует P(A|B) = P(A). Не путать с несовместностью: несовместные события (P(A∩B)=0) с ненулевыми вероятностями — зависимы (если A произошло, B не может)."
+    "explanation": "P(A∩B) = P(A)·P(B) is the criterion for independence. From it follows P(A|B) = P(A). Do not confuse this with mutual exclusivity: mutually exclusive events (P(A∩B)=0) with nonzero probabilities are dependent (if A occurred, B cannot)."
   },
   {
     "id": "statistics-probability-006",
@@ -71,9 +71,9 @@
     "topic": "probability",
     "level": "intermediate",
     "type": "concept",
-    "concept": "Нормальное распределение N(μ, σ²) — симметричное колоколообразное распределение. Полностью задаётся средним μ и дисперсией σ². Стандартное нормальное — N(0, 1).",
-    "question": "Какими параметрами задаётся нормальное распределение и почему оно так распространено?",
-    "explanation": "Нормальное распределение возникает как предельное при суммировании большого числа независимых случайных величин (Центральная предельная теорема). Поэтому рост людей, ошибки измерений, тепловой шум — всё описывается нормальным распределением."
+    "concept": "The normal distribution N(μ, σ²) is a symmetric bell-shaped distribution. It is fully specified by the mean μ and the variance σ². The standard normal is N(0, 1).",
+    "question": "What parameters specify the normal distribution and why is it so widespread?",
+    "explanation": "The normal distribution arises as the limit when summing a large number of independent random variables (the Central Limit Theorem). That is why human height, measurement errors, and thermal noise are all described by the normal distribution."
   },
   {
     "id": "statistics-probability-007",
@@ -81,11 +81,11 @@
     "topic": "probability",
     "level": "intermediate",
     "type": "choice",
-    "concept": "Эмпирическое правило трёх сигм (68-95-99.7): в нормальном распределении ±1σ охватывает 68%, ±2σ — 95%, ±3σ — 99.7% значений.",
-    "question": "Какой процент значений нормального распределения лежит в пределах ±2σ от среднего?",
+    "concept": "The empirical three-sigma rule (68-95-99.7): in a normal distribution ±1σ covers 68%, ±2σ — 95%, ±3σ — 99.7% of values.",
+    "question": "What percentage of values of a normal distribution lies within ±2σ of the mean?",
     "options": ["68%", "90%", "95%", "99.7%"],
     "answer": 2,
-    "explanation": "±2σ охватывает ~95% значений (точнее 95.45%). Отсюда порог p<0.05 в науке: результат за пределами ±2σ считается значимым. ±3σ используется в контроле качества (концепция «шести сигм» требует, чтобы дефекты выходили за ±6σ)."
+    "explanation": "±2σ covers ~95% of values (more precisely 95.45%). This is the origin of the p<0.05 threshold in science: a result beyond ±2σ is considered significant. ±3σ is used in quality control (the 'six sigma' concept requires defects to fall beyond ±6σ)."
   },
   {
     "id": "statistics-probability-008",
@@ -93,9 +93,9 @@
     "topic": "probability",
     "level": "intermediate",
     "type": "concept",
-    "concept": "Биномиальное распределение B(n, p) описывает число успехов в n независимых испытаниях Бернулли с вероятностью успеха p. P(X=k) = C(n,k) · p^k · (1-p)^(n-k).",
-    "question": "Какие условия необходимы для применения биномиального распределения?",
-    "explanation": "Четыре условия: фиксированное n, только два исхода (успех/неудача), постоянная p, испытания независимы. Примеры: число орлов при n бросках монеты, число дефектных изделий в партии. При больших n и умеренных p биномиальное приближается к нормальному."
+    "concept": "The binomial distribution B(n, p) describes the number of successes in n independent Bernoulli trials with success probability p. P(X=k) = C(n,k) · p^k · (1-p)^(n-k).",
+    "question": "What conditions are required to apply the binomial distribution?",
+    "explanation": "Four conditions: a fixed n, only two outcomes (success/failure), constant p, and independent trials. Examples: the number of heads in n coin flips, the number of defective items in a batch. For large n and moderate p the binomial approaches the normal distribution."
   },
   {
     "id": "statistics-probability-009",
@@ -103,13 +103,13 @@
     "topic": "probability",
     "level": "intermediate",
     "type": "output",
-    "concept": "Биномиальная вероятность: P(X=k) = C(n,k) · p^k · (1-p)^(n-k). В Python comb() из math вычисляет биномиальный коэффициент.",
+    "concept": "Binomial probability: P(X=k) = C(n,k) · p^k · (1-p)^(n-k). In Python comb() from math computes the binomial coefficient.",
     "code": "from math import comb\nn, k, p = 5, 3, 0.5\nprob = comb(n, k) * p**k * (1-p)**(n-k)\nprint(round(prob, 4))",
-    "question": "Что выведет программа?",
+    "question": "What will the program output?",
     "options": ["0.25", "0.3125", "0.5", "0.125"],
     "answer": 1,
     "expected_output": "0.3125",
-    "explanation": "C(5,3)=10. p^3=0.5^3=0.125, (1-p)^2=0.25. 10·0.125·0.25 = 0.3125. Это вероятность ровно 3 орлов из 5 бросков честной монеты. При p=0.5 распределение симметрично, поэтому P(X=2)=P(X=3)=0.3125."
+    "explanation": "C(5,3)=10. p^3=0.5^3=0.125, (1-p)^2=0.25. 10·0.125·0.25 = 0.3125. This is the probability of exactly 3 heads out of 5 flips of a fair coin. At p=0.5 the distribution is symmetric, so P(X=2)=P(X=3)=0.3125."
   },
   {
     "id": "statistics-probability-010",
@@ -117,9 +117,9 @@
     "topic": "probability",
     "level": "beginner",
     "type": "concept",
-    "concept": "Математическое ожидание E[X] — среднее значение случайной величины, взвешенное по вероятностям: E[X] = Σ xᵢ · P(X=xᵢ). Это «центр тяжести» распределения.",
-    "question": "Что такое математическое ожидание и может ли оно быть нереализуемым значением?",
-    "explanation": "E[X] не обязан быть реально достижимым. При броске кубика E[X] = 3.5, хотя 3.5 выпасть не может. Ожидание линейно: E[aX+b] = a·E[X]+b и E[X+Y] = E[X]+E[Y] — это верно всегда, даже для зависимых переменных."
+    "concept": "The expected value E[X] is the mean value of a random variable, weighted by probabilities: E[X] = Σ xᵢ · P(X=xᵢ). It is the 'center of mass' of the distribution.",
+    "question": "What is the expected value and can it be a value that is never realized?",
+    "explanation": "E[X] need not be actually attainable. For a die roll E[X] = 3.5, although 3.5 can never come up. Expectation is linear: E[aX+b] = a·E[X]+b and E[X+Y] = E[X]+E[Y] — this always holds, even for dependent variables."
   },
   {
     "id": "statistics-probability-011",
@@ -127,16 +127,16 @@
     "topic": "probability",
     "level": "intermediate",
     "type": "choice",
-    "concept": "Закон больших чисел (ЗБЧ): при увеличении числа испытаний выборочное среднее сходится к математическому ожиданию генеральной совокупности.",
-    "question": "Что утверждает закон больших чисел?",
+    "concept": "The law of large numbers (LLN): as the number of trials increases, the sample mean converges to the expected value of the population.",
+    "question": "What does the law of large numbers state?",
     "options": [
-      "Дисперсия убывает до нуля при n→∞",
-      "Частота события стремится к его вероятности при n→∞",
-      "Распределение становится нормальным при n→∞",
-      "Все значения сходятся к медиане при n→∞"
+      "The variance decreases to zero as n→∞",
+      "The frequency of an event approaches its probability as n→∞",
+      "The distribution becomes normal as n→∞",
+      "All values converge to the median as n→∞"
     ],
     "answer": 1,
-    "explanation": "ЗБЧ: выборочное среднее x̄ → μ при n→∞. Это обосновывает статистику: больше наблюдений — точнее оценки. Не путать с ЦПТ (о форме распределения). «Выравнивание» будущих результатов — заблуждение: кубик не «помнит» прошлых бросков."
+    "explanation": "LLN: the sample mean x̄ → μ as n→∞. This justifies statistics: more observations mean more accurate estimates. Do not confuse it with the CLT (about the shape of the distribution). The 'evening out' of future results is a fallacy: a die does not 'remember' past rolls."
   },
   {
     "id": "statistics-probability-012",
@@ -144,10 +144,10 @@
     "topic": "probability",
     "level": "intermediate",
     "type": "fill",
-    "concept": "Математическое ожидание биномиального B(n,p) выводится из линейности E[X] и суммирования n независимых бернуллиевских переменных, каждая с E=p.",
-    "question": "Математическое ожидание биномиального распределения B(n, p): E[X] = ___",
+    "concept": "The expected value of the binomial B(n,p) is derived from the linearity of E[X] and the summation of n independent Bernoulli variables, each with E=p.",
+    "question": "The expected value of the binomial distribution B(n, p): E[X] = ___",
     "options": ["n·p", "n·p·(1-p)", "√(n·p)", "n/(p+1)"],
     "answer": 0,
-    "explanation": "E[X] = n·p. Каждое из n испытаний Бернулли имеет E=p, по линейности E[X₁+…+Xₙ] = n·p. Дисперсия: D[X] = n·p·(1-p). Пример: 100 бросков монеты, ожидаемое число орлов = 100·0.5 = 50."
+    "explanation": "E[X] = n·p. Each of the n Bernoulli trials has E=p, so by linearity E[X₁+…+Xₙ] = n·p. The variance is: D[X] = n·p·(1-p). Example: 100 coin flips, expected number of heads = 100·0.5 = 50."
   }
 ]

@@ -5,9 +5,9 @@
     "topic": "ownership",
     "level": "beginner",
     "type": "concept",
-    "concept": "Ownership — система управления памятью без GC. Значения с фиксированным размером (i32, bool) живут на стеке. Heap-типы (String, Vec) хранят на стеке только метаданные [ptr | len | cap], а сами данные — в heap. Когда владелец уходит из области видимости, компилятор автоматически вставляет вызов drop() — он освобождает heap-буфер. Это детерминированное освобождение без GC-пауз.",
-    "question": "Что такое ownership в Rust?",
-    "explanation": "Три правила: 1) у каждого значения есть ровно один владелец; 2) владелец только один; 3) при выходе из scope вызывается drop(). Пример: String из \"hello\" занимает 24 байта на стеке (ptr 8б + len 8б + cap 8б) и 5 байт в heap. При выходе из scope компилятор вставляет drop(s) — освобождает heap-буфер через аллокатор. Стековая часть уходит сама при pop. GC не нужен: компилятор знает статически, в какой точке нужен drop()."
+    "concept": "Ownership is a memory management system without a GC. Values with a fixed size (i32, bool) live on the stack. Heap types (String, Vec) store only metadata on the stack [ptr | len | cap], while the data itself lives on the heap. When the owner goes out of scope, the compiler automatically inserts a call to drop() that frees the heap buffer. This is deterministic deallocation without GC pauses.",
+    "question": "What is ownership in Rust?",
+    "explanation": "Three rules: 1) every value has exactly one owner; 2) there is only one owner; 3) when it goes out of scope, drop() is called. Example: a String built from \"hello\" takes 24 bytes on the stack (ptr 8b + len 8b + cap 8b) and 5 bytes on the heap. When it goes out of scope, the compiler inserts drop(s), which frees the heap buffer through the allocator. The stack part is released automatically on pop. No GC is needed: the compiler knows statically at which point drop() is required."
   },
   {
     "id": "rust-ownership-002",
@@ -15,13 +15,13 @@
     "topic": "ownership",
     "level": "beginner",
     "type": "compiles",
-    "concept": "При присвоении переменной, содержащей heap-данные (String), происходит move — исходная переменная становится недействительной.",
+    "concept": "When you assign a variable that holds heap data (String), a move occurs and the original variable becomes invalid.",
     "code": "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n    println!(\"{}\", s1);\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Does this code compile?",
+    "options": ["Yes", "No"],
     "answer": 1,
     "expected": "fails",
-    "explanation": "Нет. После `let s2 = s1` владение String переходит к s2. Попытка использовать s1 после move вызывает: `error[E0382]: borrow of moved value: `s1``. Чтобы исправить, нужен s1.clone()."
+    "explanation": "No. After `let s2 = s1`, ownership of the String moves to s2. Trying to use s1 after the move causes: `error[E0382]: borrow of moved value: `s1``. To fix it, use s1.clone()."
   },
   {
     "id": "rust-ownership-003",
@@ -29,13 +29,13 @@
     "topic": "ownership",
     "level": "beginner",
     "type": "compiles",
-    "concept": "Типы с трейтом Copy (i32, f64, bool, char) при присвоении копируются, а не перемещаются. Исходная переменная остаётся действительной.",
+    "concept": "Types with the Copy trait (i32, f64, bool, char) are copied on assignment rather than moved. The original variable stays valid.",
     "code": "fn main() {\n    let x = 5;\n    let y = x;\n    println!(\"{} {}\", x, y);\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Does this code compile?",
+    "options": ["Yes", "No"],
     "answer": 0,
     "expected": "compiles",
-    "explanation": "Да. i32 реализует трейт Copy, поэтому `let y = x` создаёт копию значения. Оба x и y независимы и доступны. Stack-данные (числа, bool, char) копируются автоматически."
+    "explanation": "Yes. i32 implements the Copy trait, so `let y = x` makes a copy of the value. Both x and y are independent and accessible. Stack data (numbers, bool, char) is copied automatically."
   },
   {
     "id": "rust-ownership-004",
@@ -43,13 +43,13 @@
     "topic": "ownership",
     "level": "beginner",
     "type": "compiles",
-    "concept": "Передача значения в функцию — это тоже move для heap-типов. После вызова исходная переменная недоступна.",
+    "concept": "Passing a value into a function is also a move for heap types. After the call the original variable is no longer available.",
     "code": "fn take(s: String) { println!(\"{}\", s); }\nfn main() {\n    let s = String::from(\"hi\");\n    take(s);\n    println!(\"{}\", s);\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Does this code compile?",
+    "options": ["Yes", "No"],
     "answer": 1,
     "expected": "fails",
-    "explanation": "Нет. Вызов `take(s)` перемещает s в функцию. После возврата s больше недействителен. Ошибка: `error[E0382]: use of moved value: `s``. Решение: вернуть String из функции или использовать &String."
+    "explanation": "No. Calling `take(s)` moves s into the function. After it returns, s is no longer valid. Error: `error[E0382]: use of moved value: `s``. Fix: return the String from the function or use &String."
   },
   {
     "id": "rust-ownership-005",
@@ -57,13 +57,13 @@
     "topic": "ownership",
     "level": "beginner",
     "type": "output",
-    "concept": "Функция может вернуть владение, передав значение обратно через return. Владение следует возвращаемому значению.",
+    "concept": "A function can return ownership by passing a value back via return. Ownership follows the returned value.",
     "code": "fn give() -> String {\n    String::from(\"hello\")\n}\nfn main() {\n    let s = give();\n    println!(\"{}\", s);\n}",
-    "question": "Что выведет программа?",
-    "options": ["hello", "Ошибка компиляции", "", "give()"],
+    "question": "What does this program print?",
+    "options": ["hello", "Compilation error", "", "give()"],
     "answer": 0,
     "expected_output": "hello",
-    "explanation": "Функция give() создаёт String и передаёт владение вызывающему через return. s получает владение строкой. Программа выводит: hello."
+    "explanation": "The give() function creates a String and transfers ownership to the caller via return. s receives ownership of the string. The program prints: hello."
   },
   {
     "id": "rust-ownership-006",
@@ -71,13 +71,13 @@
     "topic": "ownership",
     "level": "intermediate",
     "type": "compiles",
-    "concept": "Drop вызывается автоматически при выходе значения из области видимости. Явный вызов drop(x) перемещает значение и дропает его немедленно.",
+    "concept": "Drop is called automatically when a value goes out of scope. An explicit drop(x) call moves the value and drops it immediately.",
     "code": "fn main() {\n    let s = String::from(\"hello\");\n    drop(s);\n    println!(\"{}\", s);\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Does this code compile?",
+    "options": ["Yes", "No"],
     "answer": 1,
     "expected": "fails",
-    "explanation": "Нет. `drop(s)` принимает s по значению (move) и немедленно уничтожает его. После drop(s) переменная s недействительна. Ошибка: `error[E0382]: use of moved value: `s``."
+    "explanation": "No. `drop(s)` takes s by value (a move) and destroys it immediately. After drop(s), the variable s is invalid. Error: `error[E0382]: use of moved value: `s``."
   },
   {
     "id": "rust-ownership-007",
@@ -85,13 +85,13 @@
     "topic": "ownership",
     "level": "intermediate",
     "type": "output",
-    "concept": "Переменные уничтожаются в обратном порядке объявления (LIFO). Трейт Drop позволяет выполнить код при уничтожении.",
+    "concept": "Variables are destroyed in reverse order of declaration (LIFO). The Drop trait lets you run code when a value is destroyed.",
     "code": "struct D(&'static str);\nimpl Drop for D {\n    fn drop(&mut self) {\n        println!(\"drop {}\", self.0);\n    }\n}\nfn main() {\n    let _a = D(\"a\");\n    let _b = D(\"b\");\n}",
-    "question": "Что выведет программа?",
+    "question": "What does this program print?",
     "options": ["drop a\ndrop b", "drop b\ndrop a", "drop a", "drop b"],
     "answer": 1,
     "expected_output": "drop b\ndrop a",
-    "explanation": "Переменные уничтожаются в порядке LIFO. _b объявлен после _a, поэтому drop(_b) вызывается раньше. Вывод: drop b, затем drop a."
+    "explanation": "Variables are destroyed in LIFO order. _b is declared after _a, so drop(_b) is called first. Output: drop b, then drop a."
   },
   {
     "id": "rust-ownership-008",
@@ -99,11 +99,11 @@
     "topic": "ownership",
     "level": "intermediate",
     "type": "choice",
-    "concept": "Clone создаёт глубокую копию heap-данных. String на стеке — это три поля: ptr (указатель на heap-буфер), len (длина), capacity (ёмкость). clone() выделяет новый heap-буфер, делает memcpy байт из оригинала, и возвращает новый String с независимым ptr. Теперь два String не делят память.",
-    "question": "Какой метод создаёт глубокую копию String в Rust?",
+    "concept": "Clone creates a deep copy of heap data. A String on the stack is three fields: ptr (pointer to the heap buffer), len (length), and capacity. clone() allocates a new heap buffer, memcpys the bytes from the original, and returns a new String with an independent ptr. Now the two Strings no longer share memory.",
+    "question": "Which method creates a deep copy of a String in Rust?",
     "options": ["copy()", "clone()", "dup()", "deep_copy()"],
     "answer": 1,
-    "explanation": "clone() — метод трейта Clone. Для String: 1) выделяется новый heap-буфер; 2) memcpy копирует len байт из старого буфера; 3) возвращается String{ptr: новый_адрес, len, cap}. Это O(n) операция. Copy-трейт (i32, bool) — другой механизм: просто bitwise-copy стека, heap не задействован вообще. copy(), dup(), deep_copy() в Rust не существуют."
+    "explanation": "clone() is a method of the Clone trait. For String: 1) a new heap buffer is allocated; 2) memcpy copies len bytes from the old buffer; 3) a String{ptr: new_address, len, cap} is returned. This is an O(n) operation. The Copy trait (i32, bool) is a different mechanism: just a bitwise copy of the stack, the heap is not involved at all. copy(), dup(), and deep_copy() do not exist in Rust."
   },
   {
     "id": "rust-ownership-009",
@@ -111,13 +111,13 @@
     "topic": "ownership",
     "level": "advanced",
     "type": "compiles",
-    "concept": "Деструктуризация struct также перемещает поля. После частичного перемещения структура не может использоваться целиком.",
+    "concept": "Destructuring a struct also moves its fields. After a partial move, the struct cannot be used as a whole.",
     "code": "struct Pair { a: String, b: String }\nfn main() {\n    let p = Pair {\n        a: String::from(\"x\"),\n        b: String::from(\"y\"),\n    };\n    let a = p.a;\n    println!(\"{}\", p.b);\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Does this code compile?",
+    "options": ["Yes", "No"],
     "answer": 0,
     "expected": "compiles",
-    "explanation": "Да. После `let a = p.a` поле p.a перемещено, но p.b остаётся действительным. Обращение к p.b напрямую — корректно. Ошибка была бы только при использовании p целиком после частичного move."
+    "explanation": "Yes. After `let a = p.a`, the field p.a is moved, but p.b remains valid. Accessing p.b directly is correct. An error would occur only if p were used as a whole after the partial move."
   },
   {
     "id": "rust-ownership-010",
@@ -125,10 +125,10 @@
     "topic": "ownership",
     "level": "advanced",
     "type": "fill",
-    "concept": "Rc<T> позволяет иметь нескольких владельцев через подсчёт ссылок. Используется для shared ownership в однопоточном контексте.",
-    "question": "Для shared ownership в однопоточном коде Rust используют ___<T>.",
+    "concept": "Rc<T> allows multiple owners through reference counting. It is used for shared ownership in a single-threaded context.",
+    "question": "For shared ownership in single-threaded Rust code, you use ___<T>.",
     "options": ["Box", "Rc", "Arc", "Cell"],
     "answer": 1,
-    "explanation": "Rc<T> (Reference Counted) — умный указатель с подсчётом ссылок для однопоточного shared ownership. Arc<T> — аналог для многопоточного кода. Box<T> — единственный владелец в heap. Cell<T> — interior mutability."
+    "explanation": "Rc<T> (Reference Counted) is a smart pointer with reference counting for single-threaded shared ownership. Arc<T> is the equivalent for multi-threaded code. Box<T> is a single owner on the heap. Cell<T> is for interior mutability."
   }
 ]

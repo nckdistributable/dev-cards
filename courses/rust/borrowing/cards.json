@@ -5,9 +5,9 @@
     "topic": "borrowing",
     "level": "beginner",
     "type": "concept",
-    "concept": "Borrowing позволяет использовать значение без передачи владения. Ссылка &T — это просто указатель (8 байт на 64-bit): содержит адрес данных, но не владеет ими. Borrow checker — статический анализ при компиляции, не runtime — проверяет, что ссылка не переживёт данные. Правило: любое число &T, или ровно одна &mut T, но не вместе.",
-    "question": "Что такое borrowing в Rust?",
-    "explanation": "Ссылка &T реализована как сырой указатель — никакого runtime-overhead, 8 байт на стеке. Borrow checker — это дополнительный pass компилятора: он строит граф «кто что заимствовал когда» и проверяет три инварианта: 1) ссылка не переживает данные (dangling pointer = compile error); 2) не более одной &mut T; 3) нельзя иметь &T и &mut T одновременно. В бинарнике нет следов borrow checker — ноль overhead в рантайме."
+    "concept": "Borrowing lets you use a value without transferring ownership. A reference &T is just a pointer (8 bytes on 64-bit): it holds the address of the data but does not own it. The borrow checker is a static analysis at compile time, not at runtime, and it verifies that a reference does not outlive the data. The rule: any number of &T, or exactly one &mut T, but not both together.",
+    "question": "What is borrowing in Rust?",
+    "explanation": "A reference &T is implemented as a raw pointer with no runtime overhead, 8 bytes on the stack. The borrow checker is an additional compiler pass: it builds a graph of \"who borrowed what and when\" and verifies three invariants: 1) a reference does not outlive its data (a dangling pointer is a compile error); 2) no more than one &mut T; 3) you cannot hold &T and &mut T at the same time. The binary contains no trace of the borrow checker -- zero runtime overhead."
   },
   {
     "id": "rust-borrowing-002",
@@ -15,13 +15,13 @@
     "topic": "borrowing",
     "level": "beginner",
     "type": "compiles",
-    "concept": "Неизменяемая ссылка &T позволяет читать значение, не забирая ownership. Исходная переменная остаётся действительной.",
+    "concept": "An immutable reference &T lets you read a value without taking ownership. The original variable stays valid.",
     "code": "fn len(s: &String) -> usize { s.len() }\nfn main() {\n    let s = String::from(\"hello\");\n    let n = len(&s);\n    println!(\"{} {}\", s, n);\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Does this code compile?",
+    "options": ["Yes", "No"],
     "answer": 0,
     "expected": "compiles",
-    "explanation": "Да. &s создаёт неизменяемую ссылку на s. Функция len принимает &String — только читает. После вызова s остаётся действительным. Вывод: hello 5."
+    "explanation": "Yes. &s creates an immutable reference to s. The len function takes &String and only reads it. After the call, s remains valid. Output: hello 5."
   },
   {
     "id": "rust-borrowing-003",
@@ -29,13 +29,13 @@
     "topic": "borrowing",
     "level": "beginner",
     "type": "compiles",
-    "concept": "Изменяемая ссылка &mut T позволяет модифицировать значение. Одновременно может существовать только одна &mut T — это правило предотвращает data races.",
+    "concept": "A mutable reference &mut T lets you modify a value. Only one &mut T can exist at a time -- this rule prevents data races.",
     "code": "fn main() {\n    let mut s = String::from(\"hi\");\n    let r1 = &mut s;\n    let r2 = &mut s;\n    println!(\"{} {}\", r1, r2);\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Does this code compile?",
+    "options": ["Yes", "No"],
     "answer": 1,
     "expected": "fails",
-    "explanation": "Нет. Два одновременных &mut на одни данные запрещены. Ошибка: `error[E0499]: cannot borrow `s` as mutable more than once at a time`. Это правило на этапе компиляции предотвращает data races."
+    "explanation": "No. Two simultaneous &mut references to the same data are forbidden. Error: `error[E0499]: cannot borrow `s` as mutable more than once at a time`. This compile-time rule prevents data races."
   },
   {
     "id": "rust-borrowing-004",
@@ -43,13 +43,13 @@
     "topic": "borrowing",
     "level": "beginner",
     "type": "compiles",
-    "concept": "Нельзя иметь одновременно &T и &mut T на одни данные — это нарушило бы гарантию, что неизменяемые читатели видят стабильные данные.",
+    "concept": "You cannot hold &T and &mut T to the same data at the same time -- that would break the guarantee that immutable readers see stable data.",
     "code": "fn main() {\n    let mut s = String::from(\"hello\");\n    let r = &s;\n    let rm = &mut s;\n    println!(\"{} {}\", r, rm);\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Does this code compile?",
+    "options": ["Yes", "No"],
     "answer": 1,
     "expected": "fails",
-    "explanation": "Нет. Одновременно существуют &s (неизменяемая) и &mut s (изменяемая). Ошибка: `error[E0502]: cannot borrow `s` as mutable because it is also borrowed as immutable`. Использование обеих в println! продлевает их жизнь до этой точки."
+    "explanation": "No. &s (immutable) and &mut s (mutable) exist at the same time. Error: `error[E0502]: cannot borrow `s` as mutable because it is also borrowed as immutable`. Using both in println! extends their lifetimes up to that point."
   },
   {
     "id": "rust-borrowing-005",
@@ -57,13 +57,13 @@
     "topic": "borrowing",
     "level": "intermediate",
     "type": "compiles",
-    "concept": "NLL (Non-Lexical Lifetimes, Rust 2018+): время жизни ссылки заканчивается в последней точке её использования, а не в конце блока. Это делает часть ошибок излишними.",
+    "concept": "NLL (Non-Lexical Lifetimes, Rust 2018+): a reference's lifetime ends at its last point of use, not at the end of the block. This makes some errors unnecessary.",
     "code": "fn main() {\n    let mut s = String::from(\"hello\");\n    let r = &s;\n    println!(\"{}\", r);\n    let rm = &mut s;\n    rm.push('!');\n    println!(\"{}\", rm);\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Does this code compile?",
+    "options": ["Yes", "No"],
     "answer": 0,
     "expected": "compiles",
-    "explanation": "Да, благодаря NLL. Ссылка r используется последний раз в println!(\"{}\", r), после чего её время жизни заканчивается. &mut s создаётся уже после этого — конфликта нет. В Rust < 2018 это не компилировалось бы."
+    "explanation": "Yes, thanks to NLL. The reference r is used for the last time in println!(\"{}\", r), after which its lifetime ends. &mut s is created after that, so there is no conflict. In Rust < 2018 this would not have compiled."
   },
   {
     "id": "rust-borrowing-006",
@@ -71,13 +71,13 @@
     "topic": "borrowing",
     "level": "intermediate",
     "type": "compiles",
-    "concept": "Dangling reference — ссылка на уже освобождённую память. Rust не позволяет вернуть ссылку на локальную переменную, так как та удаляется при выходе из функции.",
+    "concept": "A dangling reference is a reference to already-freed memory. Rust does not let you return a reference to a local variable, because that variable is destroyed when the function exits.",
     "code": "fn dangle() -> &String {\n    let s = String::from(\"hello\");\n    &s\n}\nfn main() {\n    let r = dangle();\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Does this code compile?",
+    "options": ["Yes", "No"],
     "answer": 1,
     "expected": "fails",
-    "explanation": "Нет. Функция возвращает &String, указывающую на s, которая уничтожается при выходе из dangle(). Ошибка: `error[E0106]: missing lifetime specifier` / `returns a reference to data owned by the current function`. Решение: вернуть String по значению."
+    "explanation": "No. The function returns &String pointing to s, which is destroyed when dangle() exits. Error: `error[E0106]: missing lifetime specifier` / `returns a reference to data owned by the current function`. Fix: return the String by value."
   },
   {
     "id": "rust-borrowing-007",
@@ -85,13 +85,13 @@
     "topic": "borrowing",
     "level": "intermediate",
     "type": "output",
-    "concept": "Метод push_str принимает &str — он заимствует строку без перемещения. Это позволяет использовать s2 и после вызова.",
+    "concept": "The push_str method takes &str -- it borrows the string without moving it. This lets you use s2 even after the call.",
     "code": "fn main() {\n    let mut s1 = String::from(\"hello\");\n    let s2 = String::from(\", world\");\n    s1.push_str(&s2);\n    println!(\"{}\", s2);\n}",
-    "question": "Что выведет программа?",
-    "options": [", world", "hello, world", "Ошибка компиляции", ""],
+    "question": "What does this program print?",
+    "options": [", world", "hello, world", "Compilation error", ""],
     "answer": 0,
     "expected_output": ", world",
-    "explanation": "push_str принимает &str (borrowed slice), а не String (owned). Поэтому s2 не перемещается и остаётся действительным. Вывод: `, world`."
+    "explanation": "push_str takes &str (a borrowed slice), not String (owned). So s2 is not moved and remains valid. Output: `, world`."
   },
   {
     "id": "rust-borrowing-008",
@@ -99,11 +99,11 @@
     "topic": "borrowing",
     "level": "advanced",
     "type": "choice",
-    "concept": "Borrow checker проверяет правила заимствования на этапе компиляции. Это один из ключевых механизмов, обеспечивающих memory safety в Rust без GC.",
-    "question": "Сколько изменяемых ссылок (&mut T) на одни данные может существовать одновременно?",
-    "options": ["Неограниченно", "Не более 2", "Ровно 1", "Зависит от типа"],
+    "concept": "The borrow checker verifies the borrowing rules at compile time. This is one of the key mechanisms that provides memory safety in Rust without a GC.",
+    "question": "How many mutable references (&mut T) to the same data can exist at the same time?",
+    "options": ["Unlimited", "No more than 2", "Exactly 1", "Depends on the type"],
     "answer": 2,
-    "explanation": "Одновременно допускается ровно одна &mut T. Это правило гарантирует отсутствие data races: если кто-то изменяет данные, никто другой не может их читать или изменять в этот момент."
+    "explanation": "Exactly one &mut T is allowed at a time. This rule guarantees the absence of data races: if someone is modifying the data, no one else can read or modify it at that moment."
   },
   {
     "id": "rust-borrowing-009",
@@ -111,13 +111,13 @@
     "topic": "borrowing",
     "level": "advanced",
     "type": "compiles",
-    "concept": "Interior mutability (Cell, RefCell) обходит правила borrow checker через проверки во время выполнения. RefCell<T> позволяет получить &mut через shared reference.",
+    "concept": "Interior mutability (Cell, RefCell) gets around the borrow checker rules through runtime checks. RefCell<T> lets you obtain a &mut through a shared reference.",
     "code": "use std::cell::RefCell;\nfn main() {\n    let x = RefCell::new(5);\n    *x.borrow_mut() += 1;\n    println!(\"{}\", x.borrow());\n}",
-    "question": "Скомпилируется ли этот код?",
-    "options": ["Да", "Нет"],
+    "question": "Does this code compile?",
+    "options": ["Yes", "No"],
     "answer": 0,
     "expected": "compiles",
-    "explanation": "Да. RefCell<T> переносит проверки borrow checker с compile-time на runtime. borrow_mut() возвращает RefMut, borrow() возвращает Ref. Если правила нарушаются в рантайме — паника. Вывод: 6."
+    "explanation": "Yes. RefCell<T> shifts the borrow checker's checks from compile time to runtime. borrow_mut() returns a RefMut, borrow() returns a Ref. If the rules are violated at runtime, it panics. Output: 6."
   },
   {
     "id": "rust-borrowing-010",
@@ -125,11 +125,11 @@
     "topic": "borrowing",
     "level": "advanced",
     "type": "fill",
-    "concept": "Слайс &[T] — это borrowed view на часть коллекции. Он хранит указатель и длину, не забирая ownership.",
-    "question": "Тип ___[T] представляет borrowed view на последовательность элементов без владения.",
+    "concept": "A slice &[T] is a borrowed view into part of a collection. It stores a pointer and a length without taking ownership.",
+    "question": "The type ___[T] represents a borrowed view into a sequence of elements without ownership.",
     "options": ["Vec", "Box", "&", "*"],
     "answer": 2,
-    "explanation": "&[T] (borrowed slice) — жирная ссылка (fat pointer): указатель на начало + длина. Не владеет данными. Vec<T> — владеющая коллекция. Box<T> — владеющий heap-указатель. *T — сырой указатель."
+    "explanation": "&[T] (a borrowed slice) is a fat pointer: a pointer to the start plus a length. It does not own the data. Vec<T> is an owning collection. Box<T> is an owning heap pointer. *T is a raw pointer."
   },
   {
     "id": "rust-borrowing-011",
@@ -137,9 +137,9 @@
     "topic": "borrowing",
     "level": "advanced",
     "type": "concept",
-    "concept": "Interior mutability — паттерн, позволяющий изменять данные через shared reference `&T`. Обычно `&T` даёт только чтение. Типы `Cell<T>` и `RefCell<T>` используют `unsafe` внутри, но предоставляют безопасный API, который всё равно соблюдает правила заимствования — либо не выдавая ссылок (`Cell`), либо проверяя их во время выполнения (`RefCell`).",
-    "question": "Что такое interior mutability и зачем она нужна?",
-    "explanation": "Иногда нужно мутировать что-то внутри структуры, у которой есть только `&T` — например, кэш внутри иммутабельного объекта, mock-объект в тестах, или граф с несколькими владельцами (`Rc<RefCell<T>>`). Borrow checker запрещает это статически, поэтому типы interior mutability смещают проверку: `Cell<T>` избегает ссылок вообще (только копии), `RefCell<T>` отслеживает заимствования в рантайме и паникует при нарушении. Это не обход системы типов — это делегирование ответственности разработчику."
+    "concept": "Interior mutability is a pattern that lets you modify data through a shared reference `&T`. Normally `&T` gives read-only access. The types `Cell<T>` and `RefCell<T>` use `unsafe` internally, but provide a safe API that still respects the borrowing rules -- either by not handing out references at all (`Cell`), or by checking them at runtime (`RefCell`).",
+    "question": "What is interior mutability and why is it needed?",
+    "explanation": "Sometimes you need to mutate something inside a struct that you only hold a `&T` to -- for example, a cache inside an immutable object, a mock object in tests, or a graph with multiple owners (`Rc<RefCell<T>>`). The borrow checker forbids this statically, so interior mutability types shift the check: `Cell<T>` avoids references entirely (copies only), `RefCell<T>` tracks borrows at runtime and panics on violation. This is not bypassing the type system -- it is delegating responsibility to the developer."
   },
   {
     "id": "rust-borrowing-012",
@@ -147,9 +147,9 @@
     "topic": "borrowing",
     "level": "advanced",
     "type": "concept",
-    "concept": "`Cell<T>` (std::cell::Cell) работает только с типами, реализующими `Copy` (числа, bool и т.д.). Методы `get()` возвращают копию значения, `set()` заменяет его. Ссылки на содержимое никогда не выдаются — поэтому runtime-проверки не нужны. Только однопоточный.",
-    "question": "Когда использовать Cell<T> вместо RefCell<T>?",
-    "explanation": "Используй `Cell<T>` когда: 1) тип `T` реализует `Copy` (числа, bool, маленькие структуры); 2) достаточно записать/прочитать значение целиком, не нужна ссылка на внутренности. `Cell` проще и немного быстрее, так как не ведёт счётчик заимствований. Пример: счётчик вызовов внутри иммутабельной структуры — `count: Cell<u32>` с `self.count.set(self.count.get() + 1)`."
+    "concept": "`Cell<T>` (std::cell::Cell) works only with types that implement `Copy` (numbers, bool, etc.). The `get()` method returns a copy of the value, `set()` replaces it. References to the contents are never handed out -- so no runtime checks are needed. Single-threaded only.",
+    "question": "When should you use Cell<T> instead of RefCell<T>?",
+    "explanation": "Use `Cell<T>` when: 1) the type `T` implements `Copy` (numbers, bool, small structs); 2) it is enough to write/read the value as a whole, with no need for a reference to the internals. `Cell` is simpler and slightly faster, since it does not keep a borrow counter. Example: a call counter inside an immutable struct -- `count: Cell<u32>` with `self.count.set(self.count.get() + 1)`."
   },
   {
     "id": "rust-borrowing-013",
@@ -157,9 +157,9 @@
     "topic": "borrowing",
     "level": "advanced",
     "type": "concept",
-    "concept": "`RefCell<T>` переносит проверки borrow checker с compile-time на runtime. `borrow()` возвращает `Ref<T>` (как `&T`), `borrow_mut()` возвращает `RefMut<T>` (как `&mut T`). Счётчик активных borrow ведётся внутри. Нарушение правил (два mut или mut+immut одновременно) — паника в рантайме. Только однопоточный.",
-    "question": "Как RefCell<T> реализует runtime borrow checking?",
-    "explanation": "RefCell хранит внутренний счётчик заимствований: `borrow()` инкрементирует счётчик читателей, `borrow_mut()` требует отсутствия всех читателей и устанавливает флаг писателя. `Ref<T>` и `RefMut<T>` — RAII-охранники, которые декрементируют счётчик при Drop. Частый паттерн: `Rc<RefCell<T>>` — разделённое владение с мутацией. Альтернатива для многопоточности — `Arc<Mutex<T>>`."
+    "concept": "`RefCell<T>` shifts the borrow checker's checks from compile time to runtime. `borrow()` returns `Ref<T>` (like `&T`), `borrow_mut()` returns `RefMut<T>` (like `&mut T`). A counter of active borrows is kept internally. Violating the rules (two mut, or mut+immut at the same time) panics at runtime. Single-threaded only.",
+    "question": "How does RefCell<T> implement runtime borrow checking?",
+    "explanation": "RefCell keeps an internal borrow counter: `borrow()` increments the reader counter, `borrow_mut()` requires that there are no readers and sets a writer flag. `Ref<T>` and `RefMut<T>` are RAII guards that decrement the counter on Drop. A common pattern: `Rc<RefCell<T>>` -- shared ownership with mutation. The alternative for multithreading is `Arc<Mutex<T>>`."
   },
   {
     "id": "rust-borrowing-014",
@@ -167,8 +167,8 @@
     "topic": "borrowing",
     "level": "advanced",
     "type": "choice",
-    "concept": "Выбор между Cell, RefCell и Mutex зависит от типа T, необходимости ссылок и многопоточности.",
-    "question": "Какой тип подходит для изменяемого счётчика `u32` внутри иммутабельной структуры в однопоточной программе?",
+    "concept": "The choice between Cell, RefCell, and Mutex depends on the type T, whether you need references, and whether you need multithreading.",
+    "question": "Which type fits a mutable `u32` counter inside an immutable struct in a single-threaded program?",
     "options": [
       "Cell<u32>",
       "RefCell<u32>",
@@ -176,6 +176,6 @@
       "Box<u32>"
     ],
     "answer": 0,
-    "explanation": "`Cell<u32>` — лучший выбор: `u32` реализует `Copy`, нужны только get/set, однопоточный контекст. `RefCell<u32>` тоже работает, но излишен — ведёт счётчик borrow без необходимости. `Arc<Mutex<u32>>` для многопоточности. `Box<u32>` не добавляет interior mutability."
+    "explanation": "`Cell<u32>` is the best choice: `u32` implements `Copy`, only get/set are needed, and it is a single-threaded context. `RefCell<u32>` also works but is overkill -- it keeps a borrow counter needlessly. `Arc<Mutex<u32>>` is for multithreading. `Box<u32>` does not add interior mutability."
   }
 ]

@@ -5,9 +5,9 @@
     "topic": "big-o",
     "level": "beginner",
     "type": "concept",
-    "concept": "Big O — асимптотическая нотация для описания поведения алгоритма при росте входных данных. Она описывает верхнюю границу (худший случай) и игнорирует константы.",
-    "question": "Что описывает Big O нотация?",
-    "explanation": "Big O сообщает, как растёт время (или память) выполнения алгоритма при росте n. O(1) = константа, O(n) = линейное, O(n²) = квадратичное. Константы и младшие члены отбрасываются."
+    "concept": "Big O is asymptotic notation for describing an algorithm's behavior as the input grows. It describes the upper bound (worst case) and ignores constants.",
+    "question": "What does Big O notation describe?",
+    "explanation": "Big O tells you how an algorithm's running time (or memory) grows as n grows. O(1) = constant, O(n) = linear, O(n²) = quadratic. Constants and lower-order terms are dropped."
   },
   {
     "id": "algo-big-o-002",
@@ -15,11 +15,11 @@
     "topic": "big-o",
     "level": "beginner",
     "type": "choice",
-    "concept": "O(1) — константное время: выполняется за фиксированное число шагов независимо от размера входных данных.",
-    "question": "Какая сложность доступа к элементу HashMap по ключу (в среднем)?",
+    "concept": "O(1) is constant time: it runs in a fixed number of steps regardless of the input size.",
+    "question": "What is the complexity of accessing a HashMap element by key (on average)?",
     "options": ["O(n)", "O(log n)", "O(1)", "O(n²)"],
     "answer": 2,
-    "explanation": "HashMap использует хеш-функцию для прямого перехода к бакету. В среднем: O(1). В худшем (много коллизий): O(n). Для Rust std::collections::HashMap — O(1) амортизированно."
+    "explanation": "A HashMap uses a hash function to jump directly to a bucket. On average: O(1). In the worst case (many collisions): O(n). For Rust's std::collections::HashMap it is O(1) amortized."
   },
   {
     "id": "algo-big-o-003",
@@ -27,13 +27,13 @@
     "topic": "big-o",
     "level": "beginner",
     "type": "output",
-    "concept": "Линейный поиск O(n) проходит весь массив. Сложность растёт пропорционально n.",
+    "concept": "Linear search O(n) scans the entire array. Its complexity grows proportionally to n.",
     "code": "fn linear_search(arr: &[i32], target: i32) -> bool {\n    for &x in arr { if x == target { return true; } }\n    false\n}\nfn main() {\n    let v = vec![3, 1, 4, 1, 5];\n    println!(\"{}\", linear_search(&v, 4));\n    println!(\"{}\", linear_search(&v, 9));\n}",
-    "question": "Что выведет программа?",
+    "question": "What will the program print?",
     "options": ["true\ntrue", "true\nfalse", "false\ntrue", "false\nfalse"],
     "answer": 1,
     "expected_output": "true\nfalse",
-    "explanation": "linear_search проходит массив поэлементно. 4 есть в массиве → true. 9 нет → false. Сложность O(n), так как в худшем случае проходим все n элементов."
+    "explanation": "linear_search scans the array element by element. 4 is in the array → true. 9 is not → false. Complexity O(n), since in the worst case we scan all n elements."
   },
   {
     "id": "algo-big-o-004",
@@ -41,11 +41,11 @@
     "topic": "big-o",
     "level": "intermediate",
     "type": "choice",
-    "concept": "O(log n) — логарифмическое время: на каждом шаге проблема делится пополам. Бинарный поиск по отсортированному массиву — классический пример.",
-    "question": "Какая сложность бинарного поиска по отсортированному массиву из n элементов?",
+    "concept": "O(log n) is logarithmic time: at each step the problem is halved. Binary search over a sorted array is the classic example.",
+    "question": "What is the complexity of binary search over a sorted array of n elements?",
     "options": ["O(n)", "O(log n)", "O(1)", "O(n log n)"],
     "answer": 1,
-    "explanation": "Бинарный поиск на каждом шаге делит пространство поиска наполовину. Для n=1000000 потребуется всего ~20 шагов (log₂ 1000000 ≈ 20). Алгоритм работает только на отсортированных данных."
+    "explanation": "Binary search halves the search space at each step. For n=1000000 it takes only ~20 steps (log₂ 1000000 ≈ 20). The algorithm works only on sorted data."
   },
   {
     "id": "algo-big-o-005",
@@ -53,13 +53,13 @@
     "topic": "big-o",
     "level": "intermediate",
     "type": "output",
-    "concept": "O(n²) характерен для вложенных циклов. Часто встречается в naive-алгоритмах сортировки (пузырьковая сортировка).",
+    "concept": "O(n²) is typical of nested loops. It commonly shows up in naive sorting algorithms (bubble sort).",
     "code": "fn count_pairs(n: usize) -> usize {\n    let mut count = 0;\n    for i in 0..n {\n        for j in (i+1)..n {\n            count += 1;\n        }\n    }\n    count\n}\nfn main() {\n    println!(\"{}\", count_pairs(4));\n}",
-    "question": "Что выведет программа?",
+    "question": "What will the program print?",
     "options": ["16", "12", "6", "8"],
     "answer": 2,
     "expected_output": "6",
-    "explanation": "count_pairs считает уникальные пары (i<j). Для n=4: (0,1),(0,2),(0,3),(1,2),(1,3),(2,3) = 6 пар. Формула: n*(n-1)/2 = 4*3/2 = 6. Сложность O(n²)."
+    "explanation": "count_pairs counts unique pairs (i<j). For n=4: (0,1),(0,2),(0,3),(1,2),(1,3),(2,3) = 6 pairs. Formula: n*(n-1)/2 = 4*3/2 = 6. Complexity O(n²)."
   },
   {
     "id": "algo-big-o-006",
@@ -67,11 +67,11 @@
     "topic": "big-o",
     "level": "intermediate",
     "type": "choice",
-    "concept": "O(n log n) — сложность эффективных алгоритмов сортировки (merge sort, heap sort, quick sort в среднем). Это асимптотически оптимальная сложность для сортировки сравнениями.",
-    "question": "Какая сложность у merge sort?",
+    "concept": "O(n log n) is the complexity of efficient sorting algorithms (merge sort, heap sort, quick sort on average). This is the asymptotically optimal complexity for comparison-based sorting.",
+    "question": "What is the complexity of merge sort?",
     "options": ["O(n)", "O(n²)", "O(n log n)", "O(log n)"],
     "answer": 2,
-    "explanation": "Merge sort: разбиваем на половины — log n уровней. На каждом уровне слияние O(n). Итого: O(n log n). Сложность сортировки сравнениями не может быть лучше (information-theoretic lower bound)."
+    "explanation": "Merge sort: we split into halves — log n levels. At each level the merge is O(n). Total: O(n log n). Comparison-based sorting cannot do better (information-theoretic lower bound)."
   },
   {
     "id": "algo-big-o-007",
@@ -79,11 +79,11 @@
     "topic": "big-o",
     "level": "advanced",
     "type": "choice",
-    "concept": "Amortized analysis: отдельные операции могут быть дорогими, но в среднем на операцию стоимость O(1). Vec::push в Rust — пример: иногда перевыделяет память (O(n)), но в среднем O(1) амортизированно.",
-    "question": "Какая амортизированная сложность Vec::push в Rust?",
+    "concept": "Amortized analysis: individual operations may be expensive, but the average cost per operation is O(1). Vec::push in Rust is an example: it occasionally reallocates memory (O(n)), but on average it is O(1) amortized.",
+    "question": "What is the amortized complexity of Vec::push in Rust?",
     "options": ["O(n)", "O(log n)", "O(n²)", "O(1)"],
     "answer": 3,
-    "explanation": "Vec вдвое увеличивает емкость при переполнении. Перевыделение O(n) размазывается на n операций push. Средняя стоимость одного push = O(1) амортизированно."
+    "explanation": "Vec doubles its capacity when it overflows. The O(n) reallocation is spread across n push operations. The average cost of a single push is O(1) amortized."
   },
   {
     "id": "algo-big-o-008",
@@ -91,10 +91,10 @@
     "topic": "big-o",
     "level": "advanced",
     "type": "fill",
-    "concept": "O(2ⁿ) — экспоненциальная сложность. Характерна для наивной рекурсии Fibonacci без мемоизации. Для n=50 — больше триллиона вызовов.",
-    "question": "Наивная рекурсия Fibonacci имеет сложность O(_ⁿ).",
+    "concept": "O(2ⁿ) is exponential complexity. It is typical of naive recursive Fibonacci without memoization. For n=50 that's more than a trillion calls.",
+    "question": "Naive recursive Fibonacci has complexity O(_ⁿ).",
     "options": ["n", "log", "n²", "2"],
     "answer": 3,
-    "explanation": "fib(n) = fib(n-1) + fib(n-2) — каждый вызов порождает два новых. Дерево вызовов растёт как 2ⁿ. Для исправления — мемоизация (O(n)) или динамическое программирование."
+    "explanation": "fib(n) = fib(n-1) + fib(n-2) — each call spawns two new ones. The call tree grows as 2ⁿ. To fix this, use memoization (O(n)) or dynamic programming."
   }
 ]

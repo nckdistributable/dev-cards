@@ -5,9 +5,9 @@
     "topic": "inference",
     "level": "intermediate",
     "type": "concept",
-    "concept": "Центральная предельная теорема (ЦПТ): среднее достаточно большой выборки из любого распределения с конечными μ и σ² стремится к нормальному N(μ, σ²/n). Обычно достаточно n ≥ 30.",
-    "question": "Что утверждает центральная предельная теорема и почему она важна?",
-    "explanation": "ЦПТ объясняет повсеместность нормального распределения. x̄ ~ N(μ, σ²/n) при большом n, независимо от формы исходного распределения. Это позволяет строить доверительные интервалы и тесты, не зная точного закона распределения данных."
+    "concept": "Central Limit Theorem (CLT): the mean of a sufficiently large sample from any distribution with finite μ and σ² tends toward the normal distribution N(μ, σ²/n). Usually n ≥ 30 is enough.",
+    "question": "What does the Central Limit Theorem state and why is it important?",
+    "explanation": "The CLT explains the ubiquity of the normal distribution. x̄ ~ N(μ, σ²/n) for large n, regardless of the shape of the original distribution. This makes it possible to build confidence intervals and tests without knowing the exact distribution law of the data."
   },
   {
     "id": "statistics-inference-002",
@@ -15,16 +15,16 @@
     "topic": "inference",
     "level": "intermediate",
     "type": "choice",
-    "concept": "95%-й доверительный интервал (CI) — результат процедуры, которая при многократном повторении в 95% случаев накрывает истинный параметр.",
-    "question": "Что правильно описывает 95% доверительный интервал?",
+    "concept": "A 95% confidence interval (CI) is the result of a procedure that, when repeated many times, covers the true parameter in 95% of cases.",
+    "question": "Which statement correctly describes a 95% confidence interval?",
     "options": [
-      "Истинный параметр находится в этом интервале с вероятностью 95%",
-      "95% наблюдений выборки попадают в этот интервал",
-      "95% таких интервалов при повторных экспериментах накроют истинный параметр",
-      "Вероятность ошибки при использовании интервала равна 5%"
+      "The true parameter lies within this interval with probability 95%",
+      "95% of the sample observations fall within this interval",
+      "95% of such intervals from repeated experiments will cover the true parameter",
+      "The probability of error when using the interval equals 5%"
     ],
     "answer": 2,
-    "explanation": "Частотная интерпретация: конкретный интервал либо содержит μ, либо нет — никакой «вероятности» нет. 95% — свойство процедуры построения, а не конкретного интервала. Типичная ошибка — думать, что μ лежит внутри «с вероятностью 95%»."
+    "explanation": "Frequentist interpretation: a specific interval either contains μ or it does not — there is no \"probability\" involved. The 95% is a property of the construction procedure, not of a specific interval. A common mistake is to think that μ lies inside \"with probability 95%\"."
   },
   {
     "id": "statistics-inference-003",
@@ -32,9 +32,9 @@
     "topic": "inference",
     "level": "beginner",
     "type": "concept",
-    "concept": "Нулевая гипотеза H₀ — утверждение об отсутствии эффекта (статус-кво). Альтернативная H₁ — то, что мы хотим доказать. Тест решает: есть ли достаточно доказательств, чтобы отвергнуть H₀.",
-    "question": "В чём разница между нулевой и альтернативной гипотезами?",
-    "explanation": "H₀ отвергается, когда данные делают её крайне маловероятной. «Не отвергаем H₀» ≠ «H₀ верна» — мы лишь не нашли достаточных доказательств против. Принцип статистики: бремя доказательства лежит на H₁, как и «презумпция невиновности» в праве."
+    "concept": "The null hypothesis H₀ is a statement of no effect (the status quo). The alternative H₁ is what we want to prove. The test decides whether there is enough evidence to reject H₀.",
+    "question": "What is the difference between the null and alternative hypotheses?",
+    "explanation": "H₀ is rejected when the data make it extremely unlikely. \"Failing to reject H₀\" ≠ \"H₀ is true\" — we have simply not found enough evidence against it. A principle of statistics: the burden of proof lies on H₁, much like the \"presumption of innocence\" in law."
   },
   {
     "id": "statistics-inference-004",
@@ -42,16 +42,16 @@
     "topic": "inference",
     "level": "intermediate",
     "type": "choice",
-    "concept": "p-значение — вероятность получить наблюдаемый результат (или более экстремальный) при условии, что H₀ верна.",
-    "question": "Что такое p-значение?",
+    "concept": "The p-value is the probability of obtaining the observed result (or a more extreme one) given that H₀ is true.",
+    "question": "What is a p-value?",
     "options": [
-      "Вероятность того, что H₀ истинна",
-      "Вероятность наблюдаемых данных при истинной H₀",
-      "Вероятность ошибки исследователя",
-      "Мощность статистического теста"
+      "The probability that H₀ is true",
+      "The probability of the observed data given that H₀ is true",
+      "The probability of researcher error",
+      "The power of the statistical test"
     ],
     "answer": 1,
-    "explanation": "p-значение — это P(данные такие или хуже | H₀ верна). Малое p (< α=0.05) означает, что при истинной H₀ такие данные крайне редки, поэтому H₀ отвергается. Большое p — лишь нехватка доказательств, не подтверждение H₀."
+    "explanation": "The p-value is P(data this extreme or worse | H₀ is true). A small p (< α=0.05) means that, if H₀ were true, such data would be extremely rare, so H₀ is rejected. A large p is merely a lack of evidence, not confirmation of H₀."
   },
   {
     "id": "statistics-inference-005",
@@ -59,11 +59,11 @@
     "topic": "inference",
     "level": "intermediate",
     "type": "fill",
-    "concept": "Ошибка I рода (α): отвергнуть верную H₀ (ложная тревога). Ошибка II рода (β): не отвергнуть ложную H₀ (пропустить эффект). Снижение α увеличивает β при фиксированном n.",
-    "question": "Ошибка I рода — это отвержение ___ нулевой гипотезы.",
-    "options": ["верной", "ложной", "незначимой", "проверяемой"],
+    "concept": "Type I error (α): rejecting a true H₀ (false alarm). Type II error (β): failing to reject a false H₀ (missing an effect). Lowering α increases β at a fixed n.",
+    "question": "A Type I error is the rejection of a ___ null hypothesis.",
+    "options": ["true", "false", "insignificant", "testable"],
     "answer": 0,
-    "explanation": "Ошибка I рода: сказали «есть эффект», а его нет (false positive). Ошибка II рода: сказали «нет эффекта», а он есть (false negative). Между ними компромисс: строже порог α → реже ложные тревоги, но чаще пропускаем реальные эффекты."
+    "explanation": "Type I error: we said \"there is an effect\" when there is none (false positive). Type II error: we said \"there is no effect\" when there is one (false negative). There is a trade-off between them: a stricter threshold α → fewer false alarms, but more often we miss real effects."
   },
   {
     "id": "statistics-inference-006",
@@ -71,9 +71,9 @@
     "topic": "inference",
     "level": "intermediate",
     "type": "concept",
-    "concept": "t-тест Стьюдента проверяет гипотезу о среднем, когда σ неизвестна и оценивается через s. Использует t-распределение с n-1 степенями свободы, у которого тяжелее хвосты, чем у нормального.",
-    "question": "Когда применяют t-тест вместо z-теста?",
-    "explanation": "z-тест требует знания σ или большой выборки (n≥30). t-тест применяется при малом n (n<30) и неизвестной σ. При увеличении степеней свободы t-распределение сходится к нормальному. При n→∞ разница между t- и z-тестом исчезает."
+    "concept": "Student's t-test tests a hypothesis about the mean when σ is unknown and is estimated through s. It uses the t-distribution with n-1 degrees of freedom, which has heavier tails than the normal distribution.",
+    "question": "When is a t-test used instead of a z-test?",
+    "explanation": "A z-test requires a known σ or a large sample (n≥30). A t-test is used with a small n (n<30) and an unknown σ. As the degrees of freedom increase, the t-distribution converges to the normal distribution. As n→∞, the difference between the t-test and the z-test disappears."
   },
   {
     "id": "statistics-inference-007",
@@ -81,13 +81,13 @@
     "topic": "inference",
     "level": "intermediate",
     "type": "output",
-    "concept": "z-статистика для одновыборочного теста: z = (x̄ - μ₀) / (σ / √n). Стандартная ошибка SE = σ / √n показывает разброс выборочных средних.",
+    "concept": "The z-statistic for a one-sample test: z = (x̄ - μ₀) / (σ / √n). The standard error SE = σ / √n shows the spread of the sample means.",
     "code": "x_bar, mu, sigma, n = 52, 50, 10, 100\nz = (x_bar - mu) / (sigma / n**0.5)\nprint(z)",
-    "question": "Что выведет программа?",
+    "question": "What will the program output?",
     "options": ["0.2", "1.0", "2.0", "20.0"],
     "answer": 2,
     "expected_output": "2.0",
-    "explanation": "SE = σ/√n = 10/√100 = 1. z = (52-50)/1 = 2.0. При z=2 p-значение ≈ 0.046 < 0.05 — H₀ (μ=50) отвергается на уровне 5%. Выборочное среднее 52 отстоит от 50 ровно на 2 стандартные ошибки."
+    "explanation": "SE = σ/√n = 10/√100 = 1. z = (52-50)/1 = 2.0. At z=2 the p-value ≈ 0.046 < 0.05 — H₀ (μ=50) is rejected at the 5% level. The sample mean 52 is exactly 2 standard errors away from 50."
   },
   {
     "id": "statistics-inference-008",
@@ -95,16 +95,16 @@
     "topic": "inference",
     "level": "intermediate",
     "type": "choice",
-    "concept": "Критерий хи-квадрат (χ²) применяется к категориальным данным: проверяет согласие распределения с ожидаемым или независимость двух категориальных переменных.",
-    "question": "Для чего применяется критерий хи-квадрат?",
+    "concept": "The chi-square test (χ²) is applied to categorical data: it tests the goodness of fit of a distribution against an expected one, or the independence of two categorical variables.",
+    "question": "What is the chi-square test used for?",
     "options": [
-      "Сравнение средних двух групп",
-      "Проверка нормальности непрерывных данных",
-      "Проверка независимости категориальных переменных",
-      "Оценка коэффициентов линейной регрессии"
+      "Comparing the means of two groups",
+      "Testing the normality of continuous data",
+      "Testing the independence of categorical variables",
+      "Estimating the coefficients of a linear regression"
     ],
     "answer": 2,
-    "explanation": "χ² сравнивает наблюдаемые и ожидаемые частоты категорий. Применения: таблицы сопряжённости (связь пола и предпочтений), тест согласия (соответствие эмпирического распределения теоретическому). Для сравнения средних используют t-тест или ANOVA."
+    "explanation": "χ² compares observed and expected category frequencies. Applications: contingency tables (the relationship between gender and preferences), goodness-of-fit test (whether an empirical distribution matches a theoretical one). To compare means, a t-test or ANOVA is used."
   },
   {
     "id": "statistics-inference-009",
@@ -112,9 +112,9 @@
     "topic": "inference",
     "level": "beginner",
     "type": "concept",
-    "concept": "Корреляция Пирсона r измеряет силу и направление линейной связи между двумя непрерывными переменными. r=+1: идеальная положительная, r=-1: идеальная отрицательная, r=0: нет линейной связи.",
-    "question": "Что показывает корреляция и почему она не означает причинность?",
-    "explanation": "Корреляция фиксирует совместное изменение переменных, но не причинно-следственную связь. Продажи мороженого и утопания коррелируют — оба растут летом из-за жары (скрытая третья переменная). Причинность устанавливается только через рандомизированный эксперимент."
+    "concept": "Pearson correlation r measures the strength and direction of the linear relationship between two continuous variables. r=+1: perfect positive, r=-1: perfect negative, r=0: no linear relationship.",
+    "question": "What does correlation show and why does it not imply causation?",
+    "explanation": "Correlation captures the joint variation of variables, but not a cause-and-effect relationship. Ice cream sales and drownings are correlated — both rise in summer because of the heat (a hidden third variable). Causation can only be established through a randomized experiment."
   },
   {
     "id": "statistics-inference-010",
@@ -122,11 +122,11 @@
     "topic": "inference",
     "level": "beginner",
     "type": "fill",
-    "concept": "Коэффициент корреляции Пирсона безразмерен и ограничен фиксированным диапазоном, что делает его сравнимым для разных пар переменных.",
-    "question": "Коэффициент корреляции Пирсона r принимает значения от ___ до +1.",
+    "concept": "The Pearson correlation coefficient is dimensionless and bounded to a fixed range, which makes it comparable across different pairs of variables.",
+    "question": "The Pearson correlation coefficient r takes values from ___ to +1.",
     "options": ["-1", "0", "-∞", "-2"],
     "answer": 0,
-    "explanation": "r ∈ [-1, 1]. Отрицательные значения — обратная связь. r² — коэффициент детерминации: показывает долю дисперсии Y, объяснённую X. Например, r=0.8 → R²=0.64: переменная X объясняет 64% вариации Y."
+    "explanation": "r ∈ [-1, 1]. Negative values mean an inverse relationship. r² is the coefficient of determination: it shows the proportion of the variance of Y explained by X. For example, r=0.8 → R²=0.64: the variable X explains 64% of the variation in Y."
   },
   {
     "id": "statistics-inference-011",
@@ -134,8 +134,8 @@
     "topic": "inference",
     "level": "intermediate",
     "type": "concept",
-    "concept": "Линейная регрессия МНК (OLS) находит прямую ŷ = β₀ + β₁x, минимизируя сумму квадратов остатков Σ(yᵢ - ŷᵢ)². β₁ — наклон, β₀ — свободный член.",
-    "question": "Что минимизирует метод наименьших квадратов и почему именно квадраты?",
-    "explanation": "МНК минимизирует SSE = Σ(yᵢ - ŷᵢ)². Квадрат нужен, чтобы положительные и отрицательные отклонения не компенсировали друг друга, и чтобы функция была дифференцируемой. Решение: β = (XᵀX)⁻¹Xᵀy. Допущения: линейность, гомоскедастичность, независимость остатков."
+    "concept": "Ordinary least squares (OLS) linear regression finds the line ŷ = β₀ + β₁x by minimizing the sum of squared residuals Σ(yᵢ - ŷᵢ)². β₁ is the slope, β₀ is the intercept.",
+    "question": "What does the least squares method minimize, and why squares specifically?",
+    "explanation": "OLS minimizes SSE = Σ(yᵢ - ŷᵢ)². The square is needed so that positive and negative deviations do not cancel each other out, and so that the function is differentiable. The solution: β = (XᵀX)⁻¹Xᵀy. Assumptions: linearity, homoscedasticity, independence of residuals."
   }
 ]
