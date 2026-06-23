@@ -1,49 +1,49 @@
 # CLAUDE.md — dev::cards
 
-Этот файл даёт полный контекст для работы с репо без дополнительных вопросов.
+This file provides full context for working with the repo without additional questions.
 
-## Схема карточки
+## Card schema
 
 ```jsonc
 {
-  "id": "rust-lifetimes-007",       // стабильный, kebab-case, НИКОГДА не менять
-  "course": "rust",                 // папка в courses/
-  "topic": "lifetimes",             // подпапка
+  "id": "rust-lifetimes-007",       // stable, kebab-case, NEVER change
+  "course": "rust",                 // folder in courses/
+  "topic": "lifetimes",             // subfolder
   "level": "beginner|intermediate|advanced",
   "type": "concept|compiles|output|choice|fill",
-  "concept": "2-4 предложения — объяснение концепции",
-  "code": "fn main() { ... }",       // optional, ≤ 12 строк
-  "question": "Вопрос на русском?",
-  "options": ["Вариант А", "Вариант Б"],  // для choice/fill/compiles
-  "answer": 0,                      // индекс правильного варианта
-  "expected": "compiles|fails",     // ТОЛЬКО для type=compiles
-  "expected_output": "42",          // ТОЛЬКО для type=output
-  "explanation": "Почему: ..."
+  "concept": "2-4 sentences — explanation of the concept",
+  "code": "fn main() { ... }",       // optional, ≤ 12 lines
+  "question": "Question in Russian?",
+  "options": ["Option A", "Option B"],  // for choice/fill/compiles
+  "answer": 0,                      // index of the correct option
+  "expected": "compiles|fails",     // ONLY for type=compiles
+  "expected_output": "42",          // ONLY for type=output
+  "explanation": "Why: ..."
 }
 ```
 
-## Типы карточек
+## Card types
 
-| Тип | Описание | Поля |
+| Type | Description | Fields |
 |---|---|---|
-| `concept` | Только теория, ответ «Понятно» | concept, question, explanation |
-| `compiles` | Скомпилируется ли код? | code, options=["Да","Нет"], answer, expected |
-| `output` | Что выведет программа? | code, options (4 варианта), answer, expected_output |
+| `concept` | Theory only, answer is "Understood" | concept, question, explanation |
+| `compiles` | Will the code compile? | code, options=["Yes","No"], answer, expected |
+| `output` | What does the program print? | code, options (4 options), answer, expected_output |
 | `choice` | Multiple choice | options (2-4), answer |
-| `fill` | Вставить пропущенное слово | question с `___`, options, answer |
+| `fill` | Fill in the missing word | question with `___`, options, answer |
 
-## Правила качества
+## Quality rules
 
-1. **Сниппет ≤ 12 строк** — если длиннее, разбей на несколько карточек
-2. **Объяснение всегда содержит «почему»** — не просто «правильно», а механизм
-3. **compiles-карточки: ~50% да / 50% нет** в рамках одной темы
-4. **Формулировки вопросов — на русском**, код и термины — на английском
-5. **id стабилен навсегда** — прогресс пользователя привязан к id
-6. **id-формат**: `{course}-{topic}-{NNN}` например `rust-ownership-003`
-7. Для `compiles`-карточек с `expected: "fails"` — объяснение включает код ошибки компилятора
-8. Сниппеты без `fn main` CI оборачивает автоматически
+1. **Snippet ≤ 12 lines** — if longer, split into several cards
+2. **An explanation always contains the "why"** — not just "correct", but the mechanism
+3. **compiles cards: ~50% yes / 50% no** within a single topic
+4. **Question wording is in Russian**, code and terms are in English
+5. **id is stable forever** — user progress is tied to the id
+6. **id format**: `{course}-{topic}-{NNN}`, for example `rust-ownership-003`
+7. For `compiles` cards with `expected: "fails"` — the explanation includes the compiler error code
+8. Snippets without `fn main` are wrapped automatically by CI
 
-## Структура файлов
+## File structure
 
 ```
 courses/
@@ -59,11 +59,11 @@ courses/
     hashing/cards.json
 ```
 
-Каждый `cards.json` — массив объектов-карточек.
+Each `cards.json` is an array of card objects.
 
-## Примеры хороших карточек
+## Examples of good cards
 
-### Пример 1 — compiles (fails)
+### Example 1 — compiles (fails)
 
 ```json
 {
@@ -72,17 +72,17 @@ courses/
   "topic": "ownership",
   "level": "beginner",
   "type": "compiles",
-  "concept": "В Rust каждое значение имеет ровно одного владельца. При присваивании переменной, содержащей heap-данные, происходит move — исходная переменная становится недействительной.",
+  "concept": "In Rust every value has exactly one owner. When you assign a variable holding heap data, a move occurs — the original variable becomes invalid.",
   "code": "fn main() {\n    let s1 = String::from(\"hello\");\n    let s2 = s1;\n    println!(\"{}\", s1);\n}",
-  "question": "Скомпилируется ли этот код?",
-  "options": ["Да", "Нет"],
+  "question": "Will this code compile?",
+  "options": ["Yes", "No"],
   "answer": 1,
   "expected": "fails",
-  "explanation": "Нет. После `let s2 = s1` владение String перешло к s2. Попытка использовать s1 после move приводит к ошибке компилятора: `error[E0382]: borrow of moved value: s1`."
+  "explanation": "No. After `let s2 = s1` ownership of the String moved to s2. Trying to use s1 after the move causes a compiler error: `error[E0382]: borrow of moved value: s1`."
 }
 ```
 
-### Пример 2 — output
+### Example 2 — output
 
 ```json
 {
@@ -91,17 +91,17 @@ courses/
   "topic": "ownership",
   "level": "intermediate",
   "type": "output",
-  "concept": "Реализация трейта Drop вызывается автоматически, когда переменная выходит из области видимости. Порядок drop — обратный порядку объявления.",
+  "concept": "A Drop trait implementation is called automatically when a variable goes out of scope. The drop order is the reverse of declaration order.",
   "code": "struct Droppable(&'static str);\nimpl Drop for Droppable {\n    fn drop(&mut self) { println!(\"drop {}\", self.0); }\n}\nfn main() {\n    let _a = Droppable(\"a\");\n    let _b = Droppable(\"b\");\n}",
-  "question": "Что выведет программа?",
-  "options": ["drop a\ndrop b", "drop b\ndrop a", "drop a", "Ничего"],
+  "question": "What does the program print?",
+  "options": ["drop a\ndrop b", "drop b\ndrop a", "drop a", "Nothing"],
   "answer": 1,
   "expected_output": "drop b\ndrop a",
-  "explanation": "Переменные уничтожаются в порядке, обратном объявлению (LIFO). `_b` объявлен после `_a`, поэтому drop вызывается сначала для `_b`, потом для `_a`."
+  "explanation": "Variables are destroyed in reverse declaration order (LIFO). `_b` is declared after `_a`, so drop is called first for `_b`, then for `_a`."
 }
 ```
 
-### Пример 3 — concept
+### Example 3 — concept
 
 ```json
 {
@@ -110,13 +110,13 @@ courses/
   "topic": "borrowing",
   "level": "beginner",
   "type": "concept",
-  "concept": "Borrowing позволяет использовать значение без передачи владения. Неизменяемая ссылка `&T` позволяет только читать данные. Одновременно может существовать сколько угодно неизменяемых ссылок.",
-  "question": "Что такое borrowing в Rust?",
-  "explanation": "Borrowing — это механизм временного доступа к данным через ссылки без передачи ownership. Компилятор гарантирует, что ссылки не переживут данные, на которые указывают (lifetime safety)."
+  "concept": "Borrowing lets you use a value without transferring ownership. An immutable reference `&T` only allows reading the data. Any number of immutable references can exist at the same time.",
+  "question": "What is borrowing in Rust?",
+  "explanation": "Borrowing is a mechanism for temporary access to data through references without transferring ownership. The compiler guarantees that references do not outlive the data they point to (lifetime safety)."
 }
 ```
 
-## Пример плохой карточки с разбором
+## Example of a bad card with analysis
 
 ```json
 {
@@ -129,11 +129,11 @@ courses/
 }
 ```
 
-**Проблемы:**
-- `id: "q1"` — нестабильный, не следует формату
-- вопрос на английском (должен быть на русском)
-- «A Rust concept» — тавтология, не несёт смысла
-- `explanation: "Correct!"` — не объясняет механизм, нет «почему»
-- нет полей `course`, `topic`, `level`, `concept`
+**Problems:**
+- `id: "q1"` — unstable, does not follow the format
+- the question is in English (it should be in Russian)
+- "A Rust concept" — tautology, carries no meaning
+- `explanation: "Correct!"` — does not explain the mechanism, no "why"
+- missing the `course`, `topic`, `level`, `concept` fields
 
-**Правильный вариант:** см. Пример 3 выше.
+**Correct version:** see Example 3 above.

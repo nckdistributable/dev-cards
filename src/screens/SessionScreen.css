@@ -182,10 +182,10 @@
 .rating-label { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
 .rating-interval { font-size: 0.68rem; font-family: var(--font-mono); color: var(--text-muted); }
 
-.rating-снова .rating-label { color: var(--red); }
-.rating-трудно .rating-label { color: var(--yellow); }
-.rating-хорошо .rating-label { color: var(--blue); }
-.rating-легко .rating-label { color: var(--green); }
+.rating-again .rating-label { color: var(--red); }
+.rating-hard .rating-label { color: var(--yellow); }
+.rating-good .rating-label { color: var(--blue); }
+.rating-easy .rating-label { color: var(--green); }
 
 .floating-back-btn {
   position: fixed;

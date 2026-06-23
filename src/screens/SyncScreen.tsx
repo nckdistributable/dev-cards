@@ -38,9 +38,9 @@ export default function SyncScreen({ onBack }: Props) {
     try {
       const result = await syncNow()
       setLastSync(result.at)
-      setMessage(`Готово: ${result.total} карточек в облаке`)
+      setMessage(`Done: ${result.total} cards in the cloud`)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Ошибка синхронизации')
+      setError(e instanceof Error ? e.message : 'Sync error')
     } finally {
       setSyncing(false)
     }
@@ -66,21 +66,21 @@ export default function SyncScreen({ onBack }: Props) {
   return (
     <div className="screen sync-screen">
       <header className="screen-header">
-        <button className="back-btn" onClick={onBack} aria-label="Назад">
+        <button className="back-btn" onClick={onBack} aria-label="Back">
           ←
         </button>
-        <h1 className="screen-title">Синхронизация</h1>
+        <h1 className="screen-title">Sync</h1>
       </header>
 
       {!configured ? (
         <div className="sync-setup card-surface">
           <p className="sync-text">
-            Прогресс синхронизируется между устройствами через приватный GitHub
-            Gist. Данные хранятся только в твоём аккаунте.
+            Progress syncs across devices through a private GitHub
+            Gist. Data is stored only in your account.
           </p>
           <ol className="sync-steps">
             <li>
-              Открой{' '}
+              Open{' '}
               <a
                 href="https://github.com/settings/tokens/new?scopes=gist&description=dev-cards-sync"
                 target="_blank"
@@ -90,10 +90,10 @@ export default function SyncScreen({ onBack }: Props) {
               </a>
             </li>
             <li>
-              Scope <code>gist</code> уже отмечен — нажми{' '}
+              The <code>gist</code> scope is already checked — click{' '}
               <strong>Generate token</strong>
             </li>
-            <li>Вставь токен сюда:</li>
+            <li>Paste the token here:</li>
           </ol>
           <input
             className="sync-input"
@@ -110,17 +110,17 @@ export default function SyncScreen({ onBack }: Props) {
             onClick={connect}
             disabled={!tokenInput.trim() || syncing}
           >
-            {syncing ? 'Подключаю…' : 'Подключить'}
+            {syncing ? 'Connecting…' : 'Connect'}
           </button>
         </div>
       ) : (
         <div className="sync-status card-surface">
           <div className="sync-row">
-            <span className="sync-label">Статус</span>
-            <span className="sync-value ok">подключено</span>
+            <span className="sync-label">Status</span>
+            <span className="sync-value ok">connected</span>
           </div>
           <div className="sync-row">
-            <span className="sync-label">Последний синк</span>
+            <span className="sync-label">Last sync</span>
             <span className="sync-value">{formatTime(lastSync)}</span>
           </div>
           <button
@@ -128,10 +128,10 @@ export default function SyncScreen({ onBack }: Props) {
             onClick={runSync}
             disabled={syncing}
           >
-            {syncing ? 'Синхронизирую…' : 'Синхронизировать сейчас'}
+            {syncing ? 'Syncing…' : 'Sync now'}
           </button>
           <button className="btn btn-secondary btn-block" onClick={disconnect}>
-            Отключить
+            Disconnect
           </button>
         </div>
       )}
@@ -140,8 +140,8 @@ export default function SyncScreen({ onBack }: Props) {
       {error && <div className="sync-message error">{error}</div>}
 
       <p className="sync-note">
-        Синк выполняется автоматически при запуске и после каждой сессии.
-        Токен хранится только на этом устройстве.
+        Sync runs automatically on startup and after each session.
+        The token is stored only on this device.
       </p>
     </div>
   )

@@ -80,7 +80,7 @@ export default function SessionScreen({ cards, practice, onFinish, onBack }: Pro
         </div>
         <span className="session-counter">{state.currentIndex + 1}/{state.total}</span>
         {canUndo && !state.answered && (
-          <button className="undo-btn" onClick={undo} title="Отменить последний ответ">
+          <button className="undo-btn" onClick={undo} title="Undo last answer">
             ↩
           </button>
         )}
@@ -90,7 +90,7 @@ export default function SessionScreen({ cards, practice, onFinish, onBack }: Pro
         <div className="card-meta">
           <span className="card-course">
             {card.course}/{card.topic}
-            {practice && <span className="practice-badge"> · практика</span>}
+            {practice && <span className="practice-badge"> · practice</span>}
           </span>
           <span
             className="card-level"
@@ -112,7 +112,7 @@ export default function SessionScreen({ cards, practice, onFinish, onBack }: Pro
           <div className="options-grid">
             {card.type === 'concept' ? (
               <button className="btn btn-primary btn-block" onClick={revealConcept}>
-                Понятно
+                Got it
               </button>
             ) : (
               (currentItem.options ?? []).map((opt, i) => (
@@ -133,7 +133,7 @@ export default function SessionScreen({ cards, practice, onFinish, onBack }: Pro
           <div className="answer-area">
             {card.type !== 'concept' && (
               <div className={`answer-badge ${state.isCorrect ? 'correct' : 'wrong'}`}>
-                {state.isCorrect ? '✅ Правильно!' : '❌ Неправильно'}
+                {state.isCorrect ? '✅ Correct!' : '❌ Incorrect'}
               </div>
             )}
 
@@ -146,13 +146,13 @@ export default function SessionScreen({ cards, practice, onFinish, onBack }: Pro
             {practice ? (
               <>
                 {state.isCorrect === false && (
-                  <p className="requeue-hint">Карточка вернётся в конце сессии</p>
+                  <p className="requeue-hint">This card will return at the end of the session</p>
                 )}
                 <button
                   className="btn btn-primary btn-block"
                   onClick={() => applyRatingAndAdvance()}
                 >
-                  Дальше →
+                  Next →
                 </button>
               </>
             ) : (
@@ -176,7 +176,7 @@ export default function SessionScreen({ cards, practice, onFinish, onBack }: Pro
         )}
       </div>
 
-      <button className="floating-back-btn" onClick={onBack} aria-label="Назад">
+      <button className="floating-back-btn" onClick={onBack} aria-label="Back">
         ←
       </button>
     </div>

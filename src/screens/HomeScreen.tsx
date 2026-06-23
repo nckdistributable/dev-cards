@@ -44,7 +44,7 @@ function ProgressRing({ value, max }: { value: number; max: number }) {
       <div className="ring-inner">
         <span className="ring-pct">{pct}%</span>
         <span className="ring-sub">{value}/{max}</span>
-        <span className="ring-lbl">выучено</span>
+        <span className="ring-lbl">learned</span>
       </div>
     </div>
   )
@@ -118,7 +118,7 @@ export default function HomeScreen({ onStartSession, onOpenSync }: Props) {
           <span className="logo-sep">::</span>
           <span className="logo-cards">cards</span>
         </div>
-        <button className="sync-btn" onClick={onOpenSync} aria-label="Синхронизация">⚙</button>
+        <button className="sync-btn" onClick={onOpenSync} aria-label="Sync">⚙</button>
       </header>
 
       {/* ── infographic card ── */}
@@ -131,21 +131,21 @@ export default function HomeScreen({ onStartSession, onOpenSync }: Props) {
               <span className="mini-icon">🔥</span>
               <div className="mini-body">
                 <span className="mini-val">{streak}</span>
-                <span className="mini-lbl">стрик</span>
+                <span className="mini-lbl">streak</span>
               </div>
             </div>
             <div className="mini-stat">
               <span className="mini-icon">✨</span>
               <div className="mini-body">
                 <span className="mini-val">{newCount}</span>
-                <span className="mini-lbl">новых</span>
+                <span className="mini-lbl">new</span>
               </div>
             </div>
             <div className="mini-stat">
               <span className="mini-icon accent">↻</span>
               <div className="mini-body">
                 <span className="mini-val accent">{reviewCount}</span>
-                <span className="mini-lbl">повтор</span>
+                <span className="mini-lbl">review</span>
               </div>
             </div>
           </div>
@@ -176,11 +176,11 @@ export default function HomeScreen({ onStartSession, onOpenSync }: Props) {
         onClick={() => onStartSession(sessionCards)}
         disabled={sessionTotal === 0}
       >
-        {sessionTotal === 0 ? 'На сегодня всё ✨' : `Начать сессию (${sessionTotal}) →`}
+        {sessionTotal === 0 ? "That's all for today ✨" : `Start session (${sessionTotal}) →`}
       </button>
 
       <section className="home-courses">
-        <h2 className="section-title">Курсы</h2>
+        <h2 className="section-title">Courses</h2>
         {courses.map((course) => {
           const topics = getTopics(course)
           const total = getCardsByCourse(course).length

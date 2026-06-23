@@ -1,24 +1,24 @@
-# Добавить карточки
+# Add cards
 
-Добавь $ARGUMENTS карточек в соответствующий `courses/<course>/<topic>/cards.json`.
+Add $ARGUMENTS cards to the appropriate `courses/<course>/<topic>/cards.json`.
 
-## Инструкция
+## Instructions
 
-1. Прочитай `CLAUDE.md` для понимания схемы и правил качества
-2. Прочитай существующий `courses/<course>/<topic>/cards.json` (если есть) чтобы не дублировать id и темы
-3. Сгенерируй карточки строго по схеме из `schema/card.schema.json`
-4. Требования к батчу:
-   - Все типы вопросов представлены (concept, compiles, output, choice, fill)
+1. Read `CLAUDE.md` to understand the schema and quality rules
+2. Read the existing `courses/<course>/<topic>/cards.json` (if any) to avoid duplicating ids and topics
+3. Generate cards strictly according to the schema in `schema/card.schema.json`
+4. Batch requirements:
+   - All question types are represented (concept, compiles, output, choice, fill)
    - compiles: ~50% `expected: compiles`, ~50% `expected: fails`
-   - Вопросы на русском, код и термины на английском
-   - Объяснение всегда содержит «почему» — механизм, а не просто «правильно»
-   - Сниппеты ≤ 12 строк
-5. Добавь новые карточки в массив (не заменяй существующие)
-6. Прогони `npm run validate` для проверки
+   - Questions in Russian, code and terms in English
+   - The explanation always includes the "why" — the mechanism, not just "correct"
+   - Snippets ≤ 12 lines
+5. Append the new cards to the array (do not replace existing ones)
+6. Run `npm run validate` to check
 
-## Формат вызова
+## Invocation format
 
 ```
-/add-cards 10 карточек по теме rust/traits уровня intermediate
-/add-cards 6 карточек по теме algorithms/sorting уровня beginner
+/add-cards 10 cards on the topic rust/traits at the intermediate level
+/add-cards 6 cards on the topic algorithms/sorting at the beginner level
 ```

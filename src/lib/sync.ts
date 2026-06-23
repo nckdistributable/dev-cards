@@ -54,7 +54,7 @@ async function ghFetch(path: string, token: string, init?: RequestInit): Promise
     },
   })
   if (res.status === 401) {
-    throw new Error('Токен не принят GitHub. Проверь, что он не истёк и имеет scope «gist».')
+    throw new Error('Token rejected by GitHub. Make sure it has not expired and has the "gist" scope.')
   }
   return res
 }
@@ -123,7 +123,7 @@ async function findOrCreateGist(token: string): Promise<{ id: string; payload: S
       files: { [GIST_FILENAME]: { content: JSON.stringify(empty) } },
     }),
   })
-  if (!createRes.ok) throw new Error(`Не удалось создать gist: ${createRes.status}`)
+  if (!createRes.ok) throw new Error(`Failed to create gist: ${createRes.status}`)
   const created = await createRes.json()
   localStorage.setItem(GIST_ID_KEY, created.id)
   return { id: created.id, payload: empty }
@@ -143,7 +143,7 @@ function pickStats(a: DailyStats, b: DailyStats): DailyStats {
 
 export async function syncNow(): Promise<SyncResult> {
   const token = getToken()
-  if (!token) throw new Error('Синхронизация не настроена')
+  if (!token) throw new Error('Sync is not configured')
 
   const { id, payload } = await findOrCreateGist(token)
 
@@ -180,7 +180,7 @@ export async function syncNow(): Promise<SyncResult> {
       files: { [GIST_FILENAME]: { content: JSON.stringify(merged) } },
     }),
   })
-  if (!patchRes.ok) throw new Error(`Не удалось сохранить gist: ${patchRes.status}`)
+  if (!patchRes.ok) throw new Error(`Failed to save gist: ${patchRes.status}`)
 
   const at = new Date().toISOString()
   localStorage.setItem(LAST_SYNC_KEY, at)

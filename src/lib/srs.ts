@@ -66,20 +66,19 @@ export function getRatingOptions(
   const schedulingCards = f.repeat(card, now)
 
   const ratingMap: { rating: Rating; label: string }[] = [
-    { rating: Rating.Again, label: 'Снова' },
-    { rating: Rating.Hard, label: 'Трудно' },
-    { rating: Rating.Good, label: 'Хорошо' },
-    { rating: Rating.Easy, label: 'Легко' },
+    { rating: Rating.Again, label: 'Again' },
+    { rating: Rating.Hard, label: 'Hard' },
+    { rating: Rating.Good, label: 'Good' },
+    { rating: Rating.Easy, label: 'Easy' },
   ]
 
   return ratingMap.map(({ rating, label }) => {
     const next = getScheduled(schedulingCards, rating)
     const daysUntil = Math.round(next.scheduled_days)
     let interval = ''
-    if (daysUntil === 0) interval = '< 1 дня'
-    else if (daysUntil === 1) interval = '1 день'
-    else if (daysUntil < 5) interval = `${daysUntil} дня`
-    else interval = `${daysUntil} дней`
+    if (daysUntil === 0) interval = '< 1 day'
+    else if (daysUntil === 1) interval = '1 day'
+    else interval = `${daysUntil} days`
     return { rating, label, interval }
   })
 }

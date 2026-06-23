@@ -1,34 +1,34 @@
 # dev::cards
 
-Spaced repetition для разработчиков. Карточки с кодом, вопросы в стиле компилятора, прогресс в браузере без бэкенда.
+Spaced repetition for developers. Code flashcards, compiler-style questions, progress tracked in the browser with no backend.
 
-**[→ Открыть приложение](https://nckdistributable.github.io/dev-cards/)**
-
----
-
-## Как пользоваться
-
-Открой ссылку выше на телефоне → через меню браузера добавь на домашний экран. Работает офлайн.
-
-Сессия перемешивает карточки из всех курсов по алгоритму [FSRS](https://github.com/open-spaced-repetition/fsrs4anki/wiki/The-Algorithm). После ответа выбираешь одну из четырёх оценок — **Снова / Трудно / Хорошо / Легко** — и карточка уходит на повторение через соответствующий интервал.
+**[→ Open the app](https://nckdistributable.github.io/dev-cards/)**
 
 ---
 
-## Добавить карточки
+## How to use
 
-Через Claude Code:
+Open the link above on your phone, then use the browser menu to add it to your home screen. It works offline.
+
+A session shuffles cards from all courses using the [FSRS](https://github.com/open-spaced-repetition/fsrs4anki/wiki/The-Algorithm) algorithm. After answering, you pick one of four ratings — **Again / Hard / Good / Easy** — and the card is scheduled for review after the corresponding interval.
+
+---
+
+## Adding cards
+
+Via Claude Code:
 
 ```
-/add-cards 10 карточек по теме rust/traits уровня intermediate
+/add-cards 10 cards on the topic rust/traits at intermediate level
 ```
 
-Вручную — добавь объекты в `courses/<course>/<topic>/cards.json`, открой PR. CI проверит схему, уникальность id и Rust-сниппеты через `cargo check`.
+Manually — add objects to `courses/<course>/<topic>/cards.json` and open a PR. CI checks the schema, id uniqueness, and Rust snippets via `cargo check`.
 
-Правила и примеры — в [`CLAUDE.md`](./CLAUDE.md).
+Rules and examples are in [`CLAUDE.md`](./CLAUDE.md).
 
 ---
 
-## Разработка
+## Development
 
 ```bash
 npm install
@@ -36,20 +36,20 @@ npm run dev
 ```
 
 ```bash
-npm run validate    # проверка схемы и дедупликация
-npm run check-rust  # cargo check всех Rust-сниппетов
+npm run validate    # schema check and deduplication
+npm run check-rust  # cargo check of all Rust snippets
 ```
 
 ---
 
-## Стек
+## Stack
 
 | | |
 |---|---|
 | UI | React 18 + Vite + TypeScript |
 | SRS | [ts-fsrs](https://github.com/open-spaced-repetition/ts-fsrs) |
-| Хранилище | IndexedDB через [idb](https://github.com/jakearchibald/idb) |
+| Storage | IndexedDB via [idb](https://github.com/jakearchibald/idb) |
 | PWA | vite-plugin-pwa + Workbox |
-| Деплой | GitHub Actions → GitHub Pages |
+| Deploy | GitHub Actions → GitHub Pages |
 
-Прогресс привязан к `card.id` — обновление контента карточек его не сбрасывает.
+Progress is tied to `card.id` — updating card content does not reset it.

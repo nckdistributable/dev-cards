@@ -25,7 +25,7 @@ export interface DeckItem {
 }
 
 // Shuffle answer options so users learn the material, not button positions.
-// Binary Да/Нет (compiles) keeps its natural order.
+// Binary Yes/No (compiles) keeps its natural order.
 function prepareDeck(cards: Card[]): DeckItem[] {
   return shuffle(cards).map((card) => {
     if (card.options && card.type !== 'compiles' && card.options.length > 2) {
