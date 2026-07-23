@@ -1,0 +1,27 @@
+[Unit]
+Description=am2vkteams — Alertmanager to VK Teams bridge
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/am2vkteams
+EnvironmentFile=/etc/am2vkteams.env
+Restart=always
+RestartSec=2
+
+# Hardening — the service needs no privileges and no persistent state.
+DynamicUser=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+
+[Install]
+WantedBy=multi-user.target
